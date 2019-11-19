@@ -46,7 +46,6 @@
     <!-- ////////////////////////////////////////////////////////////////////////////-->
     <div class="wrapper">
 
-
       <!-- main menu-->
       <!--.main-menu(class="#{menuColor} #{menuOpenType}", class=(menuShadow == true ? 'menu-shadow' : ''))-->
       <div data-active-color="white" data-background-color="man-of-steel" data-image="{{ asset('/') }}app-assets/img/sidebar-bg/05.jpg" class="app-sidebar">
@@ -62,28 +61,44 @@
         <div class="sidebar-content">
           <div class="nav-container">
             <ul id="main-menu-navigation" data-menu="menu-navigation" data-scroll-to-active="true" class="navigation navigation-main">
+                  @if(session('privilege')[1]["browse"] ?? 0)
               <li class=" home-nav nav-item"><a href="{{ url('/') }}"><i class="ft-home"></i><span data-i18n="" class="menu-title">Dashboard</span></a>               
               </li>
+                  @endif
+                  @if(session('privilege')[2]["browse"] ?? 0)
               <li class=" nav-item"><a href="{{ url('/spb') }}"><i class="ft-map"></i><span data-i18n="" class="menu-title">SPB</span></a>
               </li>
+                  @endif
+                  @if(session('privilege')[3]["browse"] ?? 0)
               <li class=" nav-item"><a href="{{ url('/manifest') }}"><i class="ft-layers"></i><span data-i18n="" class="menu-title">Manifest</span></a>
               </li>
+                  @endif
               <li class="has-sub nav-item"><a href="#"><i class="ft-aperture"></i><span data-i18n="" class="menu-title">Master Data</span></a>
                 <ul class="menu-content">
+                  @if(session('privilege')[4]["browse"] ?? 0)
                   <li><a href="{{ url('/vehicle') }}" class="menu-item"><i class="ft-shopping-cart"></i>Armada</a>
                   </li>
+                  @endif
+                  @if(session('privilege')[5]["browse"] ?? 0)
                   <li><a href="{{ url('/branch') }}" class="menu-item"><i class="ft-share-2"></i>Cabang</a>
                   </li>
+                  @endif
+                  @if(session('privilege')[6]["browse"] ?? 0)
                   <li><a href="{{ url('/customer') }}" class="menu-item"><i class="ft-briefcase"></i>Pelanggan</a>
                   </li>
+                  @endif
                 </ul>
               </li>
               <li class="has-sub nav-item"><a href="#"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">User Management</span></a>
                 <ul class="menu-content">
+                  @if(session('privilege')[7]["browse"] ?? 0)
                   <li><a href="{{ url('/user') }}" class="menu-item"><i class="ft-user"></i>User</a>
                   </li>
+                  @endif
+                  @if(session('privilege')[8]["browse"] ?? 0)
                   <li><a href="{{ url('/role') }}" class="menu-item"><i class="ft-users"></i>Role</a>
                   </li>
+                  @endif
                 </ul>
               </li>
             </ul>

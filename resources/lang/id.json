@@ -4,6 +4,7 @@
     "Brand": "Merk",
     "Type": "Jenis",
     "Origin": "Asal",
+    "Destination": "Tujuan",
     "Code": "Kode",
     "Initial": "Inisial",
     "Address": "Alamat",
@@ -15,6 +16,7 @@
     "Vehicle": "Armada",
     "Branch": "Kantor Cabang",
     "Customer": "Pelanggan",
+    "Payment": "Pembayaran",
     "Active": "Aktif",
     "Inactive": "Tidak Aktif",
     "Date": "Tanggal"    
