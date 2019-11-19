@@ -1,0 +1,21 @@
+{
+    "Name": "Nama",
+    "No Plate": "Nopol",
+    "Brand": "Merk",
+    "Type": "Jenis",
+    "Origin": "Asal",
+    "Code": "Kode",
+    "Initial": "Inisial",
+    "Address": "Alamat",
+    "Phone": "No Telepon",
+    "Pic Name": "Nama Kontak",
+    "Pic Phone": "Telp Kontak",
+    "Province": "Provinsi",
+    "City": "Kota",
+    "Vehicle": "Armada",
+    "Branch": "Kantor Cabang",
+    "Customer": "Pelanggan",
+    "Active": "Aktif",
+    "Inactive": "Tidak Aktif",
+    "Date": "Tanggal"    
+}
