@@ -32,9 +32,23 @@ Route::group( ['middleware' => 'auth' ], function()
     Route::get('/spb/indexjson','SpbController@indexjson');
     Route::get('/spb/csvall','SpbController@csvall');
     Route::get('/spb/destroymulti','SpbController@destroymulti');
+    Route::get('/spb/searchjson','SpbController@searchjson');
     Route::resource('/spb', 'SpbController');
+    Route::get('/manifest/{a}/spb/indexjson','ManifestController@spbindexjson');
+    Route::get('/manifest/{a}/spb/csvall','ManifestController@spbcsvall');
+    Route::post('/manifest/spb/destroy','ManifestController@spbdestroy');
+    Route::get('/manifest/spb/destroymulti','ManifestController@spbdestroymulti');
+    Route::post('/manifest/spb/setmanifestmulti','ManifestController@setmanifestmulti');    
+    Route::get('/manifest/{a}/spb','ManifestController@spbindex');
+    Route::get('/manifest/{a}/report','ManifestController@report');
     Route::get('/manifest/indexjson','ManifestController@indexjson');
     Route::get('/manifest/csvall','ManifestController@csvall');
     Route::get('/manifest/destroymulti','ManifestController@destroymulti');
     Route::resource('/manifest', 'ManifestController');
+    Route::get('/spb/{a}/item/indexjson','ItemController@indexjson');
+    Route::get('/spb/{a}/item/csvall','ItemController@csvall');
+    Route::get('/spb/{a}/item/destroymulti','ItemController@destroymulti');
+    Route::resource('/spb/{a}/item', 'ItemController');
+    Route::resource('/item', 'ItemController');
+
 });

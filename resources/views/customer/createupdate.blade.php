@@ -11,12 +11,12 @@
 <section id="browse-table">
   <div class="row">
     <div class="col-12">
-      <div class="card">
       @if ($errors->any())
-              <p class="alert alert-danger">
-              {!! ucfirst(implode('<br/>', $errors->all(':message'))) !!}
-              </p>
+      <p class="alert alert-danger">
+        {!! ucfirst(implode('<br/>', $errors->all(':message'))) !!}
+      </p>
       @endif
+      <div class="card">
         <div class="card-header">
           <h4 class="card-title">Pelanggan</h4>
         </div>

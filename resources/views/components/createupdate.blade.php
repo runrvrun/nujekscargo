@@ -79,9 +79,14 @@
                 <a class="pull-right" href="{{ url($route) }}"><button type="button" class="btn btn-raised btn-warning mr-1">
                   <i class="ft-x"></i> Cancel
                 </button></a>
-                <button type="submit" class="pull-left btn btn-raised btn-primary">
+                <button type="submit" class="pull-left btn btn-raised btn-primary mr-3">
                   <i class="fa fa-check-square-o"></i> Save
+                </button>                
+                @if($saveadd ?? 0)
+                <button type="submit" name="saveadd" class="pull-left btn btn-raised btn-primary">
+                  <i class="fa fa-check-square-o"></i><i class="fa fa-plus"></i> Save and Add More
                 </button>
+                @endif
               </div>
             </form>
           </div>

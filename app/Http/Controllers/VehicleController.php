@@ -129,7 +129,7 @@ class VehicleController extends Controller
 
         $requestData = $request->all();
         Vehicle::create($requestData);
-        Session::flash('message', 'Armada ditambahkan'); 
+        Session::flash('message', __('Vehicle').' ditambahkan'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('vehicle');
     }
@@ -173,7 +173,7 @@ class VehicleController extends Controller
 
         $requestData = $request->all();
         Vehicle::find($vehicle->id)->update($requestData);
-        Session::flash('message', 'Armada diubah'); 
+        Session::flash('message', __('Vehicle').' diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('vehicle');
     }
@@ -187,7 +187,7 @@ class VehicleController extends Controller
     public function destroy(Vehicle $vehicle)
     {
         Vehicle::destroy($vehicle->id);
-        Session::flash('message', 'Armada dihapus'); 
+        Session::flash('message', __('Vehicle').' dihapus'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('vehicle');
     }
@@ -196,7 +196,7 @@ class VehicleController extends Controller
     {
         $ids = htmlentities($request->id);
         Vehicle::whereRaw('id in ('.$ids.')')->delete();
-        Session::flash('message', 'Armada dihapus'); 
+        Session::flash('message', __('Vehicle').' dihapus'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('vehicle');
     }

@@ -11,10 +11,10 @@
 <section id="browse-table">
   <div class="row">
     <div class="col-12">
-      <div class="card">
       @if(Session::has('message'))
       <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ ucfirst(Session::get('message')) }}</p>
       @endif
+      <div class="card">
         <div class="card-header">
           <h4 class="card-title">Manifest</h4>
         </div>

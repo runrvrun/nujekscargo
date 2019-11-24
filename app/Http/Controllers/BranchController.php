@@ -125,7 +125,7 @@ class BranchController extends Controller
 
         $requestData = $request->all();
         Branch::create($requestData);
-        Session::flash('message', 'Kantor Cabang ditambahkan'); 
+        Session::flash('message', __('Branch').' ditambahkan'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('branch');
     }
@@ -171,7 +171,7 @@ class BranchController extends Controller
 
         $requestData = $request->all();
         Branch::find($branch->id)->update($requestData);
-        Session::flash('message', 'Kantor Cabang diubah'); 
+        Session::flash('message', __('Branch').' diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('branch');
     }
@@ -185,7 +185,7 @@ class BranchController extends Controller
     public function destroy(Branch $branch)
     {
         Branch::destroy($branch->id);
-        Session::flash('message', 'Kantor Cabang dihapus'); 
+        Session::flash('message', __('Branch').' dihapus'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('branch');
     }
@@ -194,7 +194,7 @@ class BranchController extends Controller
     {
         $ids = htmlentities($request->id);
         Branch::whereRaw('id in ('.$ids.')')->delete();
-        Session::flash('message', 'Kantor Cabang dihapus'); 
+        Session::flash('message', __('Branch').' dihapus'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('branch');
     }

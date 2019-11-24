@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | Manifest</title>
+    <title>{{ config('app.name', 'Laravel') }} | SPB</title>
 @endsection
 
 @section('content')
@@ -11,19 +11,19 @@
 <section id="browse-table">
   <div class="row">
     <div class="col-12">
-      @if ($errors->any())
-      <p class="alert alert-danger">
-        {!! ucfirst(implode('<br/>', $errors->all(':message'))) !!}
-      </p>
-      @endif
       <div class="card">
+      @if ($errors->any())
+              <p class="alert alert-danger">
+              {!! ucfirst(implode('<br/>', $errors->all(':message'))) !!}
+              </p>
+      @endif
         <div class="card-header">
-          <h4 class="card-title">Manifest</h4>
+          <h4 class="card-title">SPB</h4>
         </div>
         <div class="card-content">
-          @component('components.createupdate',compact('cols','item'))
+          @component('components.show',compact('cols','item'))
             @slot('route')
-              manifest
+              spb
             @endslot
           @endcomponent          
         </div>
@@ -39,11 +39,4 @@
 @section('pagecss')
 @endsection
 @section('pagejs')
-<script>
-$(document).ready(function(){
-  @if(isset($no_manifest))
-  $("input[name='no_manifest']").val('{{ $no_manifest }}'); // fill next manifest no
-  @endif
-});
-</script>
 @endsection

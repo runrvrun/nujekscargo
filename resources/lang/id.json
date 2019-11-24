@@ -19,5 +19,12 @@
     "Payment": "Pembayaran",
     "Active": "Aktif",
     "Inactive": "Tidak Aktif",
+    "Item": "Barang",
+    "Bale": "Koli",
+    "Weight": "Berat",
+    "Length": "Panjang",
+    "Width": "Lebar",
+    "Height": "Tinggi",
+    "Dimension": "Dimensi",
     "Date": "Tanggal"    
 }
