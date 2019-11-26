@@ -209,5 +209,6 @@
     </script>
     @yield('pagejs')
     <!-- END PAGE LEVEL JS-->
+    @yield('modal')
   </body>
 </html>

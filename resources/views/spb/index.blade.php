@@ -18,6 +18,28 @@
         <div class="card-header">
           <h4 class="card-title">SPB</h4>
         </div>
+        <div class="card-content">
+          <div class="card-body card-dashboard">
+            <div class="card-filter row">
+              <div class="col-md-6">
+                <button class="btn btn-primary btn-outline-primary" id="nomanifest">Belum Ada Manifest</button>
+                <button class="btn btn-primary btn-outline-primary" id="havemanifest">Sudah Ada Manifest</button>
+                {{ Form::hidden('filtermanifest',-1,['id'=>'filtermanifest'])}}
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
+                      <i class="fa fa-calendar"></i>&nbsp;
+                      <span></span> <i class="fa fa-caret-down"></i>
+                      {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
+                      {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
+                  </div>
+                  <button class="btn btn-info" id="filterdaterange"><i class="ft-filter"></i> Filter</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="card-content ">
           <div class="card-body card-dashboard table-responsive">
             <table class="table browse-table">
@@ -56,6 +78,7 @@
   .BTO,.ORD{background-color: #FF586B;}
   .PAI,.CLR{background-color: #008000;}
 </style>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endsection
 @section('pagejs')
 <script src="app-assets/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
@@ -93,12 +116,19 @@ $(document).ready(function() {
         responsive: resp,
         processing: true,
         serverSide: true,
-        ajax: '{!! url('spb/indexjson') !!}',
+        ajax: {
+          url: '{!! url('spb/indexjson') !!}',
+          data : function(d){
+            d.filtermanifest = $('#filtermanifest').val();
+            d.enddate = $('#enddate').val();
+            d.startdate = $('#enddate').val();
+          }
+        },
         columns: [
           { data: 'id', name: 'checkbox' },
           @foreach($cols as $val)
           @if($val['B'])
-          { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}' }, className:'{{ $val['column'] }}'
+          { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}', className:'{{ $val['column'] }}' },
           @endif
           @endforeach
           { data: 'action', name: 'action' },
@@ -143,6 +173,9 @@ $(document).ready(function() {
             targets: ['id','created_at','updated_at','created_by','updated_by'],
             visible: false,
             searchable: false,
+        },{
+            targets: ['no_po','no_manifest'],
+            visible: false,
         }
         ],
         select: {
@@ -174,6 +207,63 @@ $(document).ready(function() {
         } 
       }
     });
+
+    $('#nomanifest').click( function() {
+        $(this).toggleClass('btn-outline-primary');
+        if($(this).hasClass('btn-outline-primary')){
+          $('#filtermanifest').val(-1);
+        }else{
+          $('#filtermanifest').val(0);
+          $('#havemanifest').addClass('btn-outline-primary');
+        }
+        table.draw();
+    } );
+    $('#havemanifest').click( function() {
+        $(this).toggleClass('btn-outline-primary');
+        if($(this).hasClass('btn-outline-primary')){
+          $('#filtermanifest').val(-1);
+        }else{
+          $('#filtermanifest').val(1);
+          $('#nomanifest').addClass('btn-outline-primary');
+        }
+        table.draw();
+    } );
+
+    $('#filterdaterange').click( function() {
+      daterange = $('#daterange').data('daterangepicker');
+      $('#startdate').val(daterange.startDate.format('YYYY-MM-DD'));
+      $('#enddate').val(daterange.endDate.format('YYYY-MM-DD'));
+      table.draw();
+    } );
+
+});
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script type="text/javascript">
+$(function() {
+
+    var start = moment().subtract(29, 'days');
+    var end = moment();
+
+    function cb(start, end) {
+        $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    }
+
+    $('#daterange').daterangepicker({
+        startDate: start,
+        endDate: end,
+        ranges: {
+           'Hari ini': [moment(), moment()],
+           'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           '7 Hari': [moment().subtract(6, 'days'), moment()],
+           '30 Hari': [moment().subtract(29, 'days'), moment()],
+           'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
+           'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, cb);
+
+    cb(start, end);
 
 });
 </script>

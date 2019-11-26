@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Manifest;
 use App\Spb;
+use App\Spb_log;
+use App\Item;
 use App\Branch;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Auth;
+use PDF;
 use Schema;
 use Session;
 use Validator;
@@ -80,11 +83,18 @@ class ManifestController extends Controller
         return view('manifest.index',compact('cols'));
     }
 
-    public function indexjson()
+    public function indexjson(Request $request)
     {
-        return datatables(Manifest::select('manifests.*','ori.province as origin','des.province as destination')
+        $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination')
         ->leftJoin('provinces as ori','origin_id','ori.id')
-        ->leftJoin('provinces as des','destination_id','des.id')
+        ->leftJoin('provinces as des','destination_id','des.id');
+
+        
+        if($request->startdate > '1990-01-01'){
+            $manifest->whereBetween('manifests.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
+        }
+
+        return datatables($manifest
         )->addColumn('action', function ($dt) {
             return view('manifest.action',compact('dt'));
         })
@@ -209,9 +219,16 @@ class ManifestController extends Controller
         return redirect('manifest');
     }
     
-    public function report(Manifest $manifest)
+    public function report($manifest_id)
     {
-        
+        $manifest = Manifest::find($manifest_id)->first();
+        $spb = Spb::with('items')->select('spbs.*','customer')
+        ->leftJoin('customers','customer_id','customers.id')
+        ->where('manifest_id',$manifest_id)
+        ->get();
+        // return view('manifest.report',compact('manifest','spb'));
+        $pdf = PDF::loadview('manifest.report',compact('manifest','spb'),[],['title' => 'Nujeks - manifest_'.$manifest->no_manifest.'.pdf']);
+    	return $pdf->stream();
     }
 
     public function spbindex($manifest_id)
@@ -305,6 +322,23 @@ class ManifestController extends Controller
         $spb_add = preg_split('@,@', $spb_add, NULL, PREG_SPLIT_NO_EMPTY);
         Spb::whereIn('no_spb', $spb_add)->update(['manifest_id'=>$request->manifest_id]);
         Session::flash('message', 'SPB ditambahkan ke Manifest'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('manifest/'.$request->manifest_id.'/spb');
+    }
+
+    public function spbupdatestatus(Request $request)
+    {
+        if(!empty($request->sel_spb_id)){
+            Spb::find($request->sel_spb_id)->update(['spb_status_id'=>$request->spb_status_id]);
+            Spb_log::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'user_id'=>Auth::user()->id,'log'=>$request->log]);
+        }elseif(!empty($request->sel_spb_ids)){
+            $sel_spb_ids = explode('%2C',$request->sel_spb_ids);
+            foreach($sel_spb_ids as $key=>$val){
+                Spb::find($val)->update(['spb_status_id'=>$request->spb_status_id]);
+                Spb_log::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'user_id'=>Auth::user()->id,'log'=>$request->log]);
+            }
+        }
+        Session::flash('message', 'Status SPB diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('manifest/'.$request->manifest_id.'/spb');
     }

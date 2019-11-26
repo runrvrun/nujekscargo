@@ -60,6 +60,35 @@
           </div>
         </div>
 @endsection
+@section('modal')
+<!-- Modal -->
+<div class="modal fade text-left" id="spb-status-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="/manifest/spb/updatestatus" method="POST">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel1">Update SPB Status: no_spb</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          @csrf
+          {{ Form::hidden('manifest_id', $manifest->id) }}
+          {{ Form::hidden('sel_spb_id',null,['id'=>'sel_spb_id']) }}
+          {{ Form::hidden('sel_spb_ids',null,['id'=>'sel_spb_ids']) }}
+          Status: {{ Form::select('spb_status_id',\App\Spb_status::pluck('status','id'),null,['class'=>'form-control','id'=>'spb_status_id']) }}
+          Keterangan: {{ Form::textarea('log',null,['class'=>'form-control','rows'=>3]) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary"><i class="ft-save"></i> Simpan</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>   
+@endsection
 @section('pagecss')
 <link rel="stylesheet" type="text/css" href="{{ asset('/') }}/app-assets/vendors/css/tables/datatable/datatables.min.css">
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
@@ -130,6 +159,9 @@ $(document).ready(function() {
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         buttons: [
+            {
+              text:'<i class="ft-eye"></i> Ubah Status', className: 'buttons-statusmulti',
+            },
             { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
             {
               extend: 'csv',
@@ -161,7 +193,7 @@ $(document).ready(function() {
             visible: false,
             searchable: false,
         },{
-            targets: ['address','pic_contact','pic_phone'],
+            targets: ['no_po','address','pic_contact','pic_phone'],
             visible: false,
         } ],
         select: {
@@ -176,6 +208,7 @@ $(document).ready(function() {
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
     $('.buttons-add').addClass('btn mr-1');
     $('.buttons-deletemulti').addClass('btn-danger mr-1');
+    $('.buttons-statusmulti').addClass('btn-info mr-1');
 
     $('.buttons-deletemulti').click(function(){
       var deleteids_arr = [];
@@ -192,7 +225,25 @@ $(document).ready(function() {
           window.location = '{!! url('manifest/spb/destroymulti?manifest_id='.$manifest->id.'&id=') !!}'+deleteids_str
         } 
       }
+    });
+
+    $('.buttons-statusmulti').click(function(){
+      var updateids_arr = [];
+      var rows_selected = table.column(0).checkboxes.selected();
+      $.each(rows_selected, function(index, rowId){
+        updateids_arr.push(rowId);
       });
+      var updateids_str = encodeURIComponent(updateids_arr);
+
+      // Check any checkbox checked or not
+      if(updateids_arr.length > 0){
+        var confirmupdate = confirm("Ubah seluruh data terpilih?");
+        if (confirmupdate == true) {
+          $("#sel_spb_ids").val(updateids_str);
+          $("#spb-status-modal").modal('show');
+        } 
+      }
+    });
 });
 </script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -247,6 +298,6 @@ $(document).ready(function() {
             .append( "<div>" + item.value + "<br>" + item.desc + "</div>" )
             .appendTo( ul );
         };
-    } );
+    });
 </script>
 @endsection

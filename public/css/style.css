@@ -4,3 +4,8 @@
 .app-sidebar .logo-img{
     width: 48px;
 }
+.card-filter{
+    border: 1px #ccc solid;
+    padding: 20px;
+    border-radius: 5px;
+}

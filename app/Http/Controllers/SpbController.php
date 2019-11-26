@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Spb;
+use App\Spb_log;
 use App\Branch;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Auth;
+use DB;
 use Schema;
 use Session;
 use Validator;
@@ -62,6 +64,18 @@ class SpbController extends Controller
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
+            if($val == 'manifest_id'){
+                $cols['no_manifest'] = ['column'=>'no_manifest','dbcolumn'=>'manifests.no_manifest',
+                    'caption'=>'Manifest',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
+            $cols['no_po'] = ['column'=>'no_po','dbcolumn'=>'items.no_po',
+                    'caption'=>'No PO',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
         } 
         // modify defaults
         $cols['customer_id']['caption'] = 'Customer';
@@ -129,14 +143,30 @@ class SpbController extends Controller
         return view('spb.index',compact('cols'));
     }
 
-    public function indexjson()
+    public function indexjson(Request $request)
     {
-        return datatables(Spb::select('spbs.*','customer','city','province','type','status_code','status')
+        // dd($request->all());
+        $spb = Spb::select('spbs.*','customer','city','province','type','status_code','status','no_manifest')
+        ->addSelect(DB::raw('GROUP_CONCAT(no_po ORDER BY no_po ASC SEPARATOR \', \') as no_po'))
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
         ->leftJoin('spb_payment_types','spb_payment_type_id','spb_payment_types.id')
-        ->leftJoin('spb_statuses','spb_Status_id','spb_statuses.id')
+        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
+        ->leftJoin('items','spb_id','spbs.id')
+        ->leftJoin('manifests','manifest_id','manifests.id')
+        ->groupBy('spbs.id');
+
+        if($request->filtermanifest == 0){
+            $spb->whereNull('manifest_id');
+        }elseif($request->filtermanifest == 1){
+            $spb->whereNotNull('manifest_id');
+        }
+        if($request->startdate > '1990-01-01'){
+            $spb->whereBetween('spbs.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
+        }
+
+        return datatables($spb
         )->addColumn('action', function ($dt) {
             return view('spb.action',compact('dt'));
         })
@@ -187,7 +217,9 @@ class SpbController extends Controller
         ]);
 
         $requestData = $request->all();
+        $requestData['spb_status_id'] = 1;
         $spb = Spb::create($requestData);
+        Spb_log::create(['spb_id'=>$spb->id,'spb_status_id'=>1,'user_id'=>Auth::user()->id,'log'=>'SPB dibuat']);
         Session::flash('message', 'SPB ditambahkan'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('spb/'.$spb->id.'/item');
@@ -240,6 +272,7 @@ class SpbController extends Controller
 
         $requestData = $request->all();
         Spb::find($spb->id)->update($requestData);
+        Spb_log::create(['spb_id'=>$spb->id,'spb_status_id'=>$request->spb_status_id,'user_id'=>Auth::user()->id,'log'=>'SPB diubah']);
         Session::flash('message', 'SPB diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('spb');

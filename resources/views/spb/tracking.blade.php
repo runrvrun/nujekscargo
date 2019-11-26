@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | Manifest</title>
+    <title>{{ config('app.name', 'Laravel') }} | @lang('Item')</title>
 @endsection
 
 @section('content')
@@ -15,25 +15,15 @@
       <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ ucfirst(Session::get('message')) }}</p>
       @endif
       <div class="card">
-        <div class="card-header">
-          <h4 class="card-title">Manifest</h4>
+        <div style="position:absolute">
+          <a href="{{ url('spb') }}" class="btn btn-primary pull-left"><i class="ft-arrow-left"></i> Kembali ke SPB</a>
         </div>
-        <div class="card-content">
-          <div class="card-body card-dashboard">
-            <div class="card-filter row">
-              <div class="col-md-6">
-                <div class="input-group">
-                  <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
-                      <i class="fa fa-calendar"></i>&nbsp;
-                      <span></span> <i class="fa fa-caret-down"></i>
-                      {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
-                      {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
-                  </div>
-                  <button class="btn btn-info" id="filterdaterange"><i class="ft-filter"></i> Filter</button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="card-header">
+            <h4 class="card-title">{{ $spb->no_spb }}</h4>
+        </div>
+        <div class="card-header">
+        <h5>{{ $spb->customer }} <i class="ft-arrow-right"></i> {{ $spb->recipient }}</h5>
+        <br/><p>Tanggal pengiriman: {{ $spb->created_at->format('j F Y') }}</p>
         </div>
         <div class="card-content ">
           <div class="card-body card-dashboard table-responsive">
@@ -62,28 +52,32 @@
         </div>
 @endsection
 @section('pagecss')
-<link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/datatables.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('/') }}/app-assets/vendors/css/tables/datatable/datatables.min.css">
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endsection
 @section('pagejs')
-<script src="app-assets/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
-<script src="app-assets/vendors/js/datatable/dataTables.buttons.min.js" type="text/javascript"></script>
-<script src="app-assets/vendors/js/datatable/buttons.flash.min.js" type="text/javascript"></script>
-<script src="app-assets/vendors/js/datatable/jszip.min.js" type="text/javascript"></script>
-<script src="app-assets/vendors/js/datatable/pdfmake.min.js" type="text/javascript"></script>
-<script src="app-assets/vendors/js/datatable/vfs_fonts.js" type="text/javascript"></script>
-<script src="app-assets/vendors/js/datatable/buttons.html5.min.js" type="text/javascript"></script>
-<script src="app-assets/vendors/js/datatable/buttons.print.min.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/dataTables.buttons.min.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/buttons.flash.min.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/jszip.min.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/pdfmake.min.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/vfs_fonts.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/buttons.html5.min.js" type="text/javascript"></script>
+<script src="{{ asset('/') }}/app-assets/vendors/js/datatable/buttons.print.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>    
 <script>
 $(document).ready(function() {
 
     $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );
     
-    $('.browse-table thead tr:eq(0) th').html('');//clear content
+    $('.browse-table thead tr:eq(0) th:first').html('');//clear content
+    $('.browse-table thead tr:eq(0) th:last').html('');//clear content
     $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
         var title = $(this).text();
+        if((title == 'Dimensi') || (title == 'Volume')) {// no search box
+          $(this).html('');
+          return;
+        };
         $(this).html( '<input type="text" class="form-control" />' );
         $( 'input', this ).on( 'keyup change', function () {
             if ( table.column(i+1).search() !== this.value ) {
@@ -102,18 +96,16 @@ $(document).ready(function() {
         responsive: resp,
         processing: true,
         serverSide: true,
-        ajax: {
-          url: '{!! url('manifest/indexjson') !!}',
-          data : function(d){
-            d.enddate = $('#enddate').val();
-            d.startdate = $('#enddate').val();
-          }
-        },
+        ajax: '{!! url('spb/'.$spb->id.'/item/indexjson') !!}',
         columns: [
           { data: 'id', name: 'checkbox' },
           @foreach($cols as $val)
           @if($val['B'])
-          { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}' },
+          { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}'
+          @if($val['type'] == 'number')
+          , render: $.fn.dataTable.render.number( ',', '.', 2 ) 
+          @endif
+          },
           @endif
           @endforeach
           { data: 'action', name: 'action' },
@@ -126,7 +118,7 @@ $(document).ready(function() {
             {
               text: '<i class="ft-plus"></i> Add New', className: 'buttons-add',
               action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('manifest/create') }}'
+                  window.location = '{{ url('spb/'.$spb->id.'/item/create') }}'
               }
             },  
             { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
@@ -135,7 +127,7 @@ $(document).ready(function() {
               text: 'CSV All',
               className: 'buttons-csvall',
               action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('manifest/csvall') }}'
+                  window.location = '{{ url('spb/'.$spb->id.'/item/csvall') }}'
               }
             },
             {
@@ -182,46 +174,10 @@ $(document).ready(function() {
       if(deleteids_arr.length > 0){
         var confirmdelete = confirm("Hapus seluruh data terpilih?");
         if (confirmdelete == true) {
-          window.location = '{{ url('manifest/destroymulti?id=') }}'+deleteids_str
+          window.location = '{{ url('spb/'.$spb->id.'/item/destroymulti?id=') }}'+deleteids_str
         } 
       }
       });
-      
-    $('#filterdaterange').click( function() {
-      daterange = $('#daterange').data('daterangepicker');
-      $('#startdate').val(daterange.startDate.format('YYYY-MM-DD'));
-      $('#enddate').val(daterange.endDate.format('YYYY-MM-DD'));
-      table.draw();
-    } );
-});
-</script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script type="text/javascript">
-$(function() {
-
-    var start = moment().subtract(29, 'days');
-    var end = moment();
-
-    function cb(start, end) {
-        $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-    }
-
-    $('#daterange').daterangepicker({
-        startDate: start,
-        endDate: end,
-        ranges: {
-           'Hari ini': [moment(), moment()],
-           'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-           '7 Hari': [moment().subtract(6, 'days'), moment()],
-           '30 Hari': [moment().subtract(29, 'days'), moment()],
-           'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
-           'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        }
-    }, cb);
-
-    cb(start, end);
-
 });
 </script>
 @endsection
