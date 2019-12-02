@@ -12,7 +12,7 @@
                         <div class="card-body pt-2 pb-0">
                         <div class="media">
                             <div class="media-body white text-left">
-                            <h3 class="font-large-1 mb-0">2156</h3>
+                            <h3 class="font-large-1 mb-0">{{ $spbmtd }}</h3>
                             <span>SPB MTD</span>
                             </div>
                             <div class="media-right white text-right">
@@ -31,7 +31,7 @@
                         <div class="card-body pt-2 pb-0">
                         <div class="media">
                             <div class="media-body white text-left">
-                            <h3 class="font-large-1 mb-0">1567</h3>
+                            <h3 class="font-large-1 mb-0">{{ $manifestmtd }}</h3>
                             <span>Manifest MTD</span>
                             </div>
                             <div class="media-right white text-right">
@@ -52,7 +52,7 @@
                         <div class="card-body pt-2 pb-0">
                         <div class="media">
                             <div class="media-body white text-left">
-                            <h3 class="font-large-1 mb-0">24566</h3>
+                            <h3 class="font-large-1 mb-0">{{ $spbytd }}</h3>
                             <span>SPB YTD</span>
                             </div>
                             <div class="media-right white text-right">
@@ -71,7 +71,7 @@
                         <div class="card-body pt-2 pb-0">
                         <div class="media">
                             <div class="media-body white text-left">
-                            <h3 class="font-large-1 mb-0">8695</h3>
+                            <h3 class="font-large-1 mb-0">{{ $manifestytd }}</h3>
                             <span>Manifest YTD</span>
                             </div>
                             <div class="media-right white text-right">
@@ -85,28 +85,12 @@
                     </div>
                 </div>
             </div>
-            <!--Line with Area Chart 1 Starts-->
-            <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                <div class="card-content">
-                    <div class="card-body">
-                    <div class="chart-info mb-3 ml-3">
-                        <span class="gradient-blackberry d-inline-block rounded-circle mr-1" style="width:15px; height:15px;"></span>
-                        Manifest
-                        <span class="gradient-mint d-inline-block rounded-circle mr-1 ml-2" style="width:15px; height:15px;"></span>
-                        SPB
-                    </div>
-                    <div id="line-area" class="height-350 lineArea">
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            </div>
-            <!--Line with Area Chart 1 Ends-->
         </div>
     </div>
 </div>
 
+@endsection
+@section('pagecss')
+@endsection
+@section('pagejs')
 @endsection

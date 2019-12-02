@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Spb;
-use App\Spb_log;
+use App\Spb_track;
 use App\Branch;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Auth;
 use DB;
+use PDF;
 use Schema;
 use Session;
 use Validator;
@@ -32,52 +33,59 @@ class SpbController extends Controller
             if($val == 'customer_id'){
                 $cols['customer'] = ['column'=>'customer','dbcolumn'=>'customers.customer',
                     'caption'=>'Customer',
-                    'type' => 'text',
+                    'type' => 'text', 
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
             if($val == 'city_id'){
                 $cols['city'] = ['column'=>'city','dbcolumn'=>'cities.city',
                     'caption'=>'City',
-                    'type' => 'text',
+                    'type' => 'text', 
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
             if($val == 'province_id'){
                 $cols['province'] = ['column'=>'province','dbcolumn'=>'provinces.province',
                     'caption'=>'Province',
-                    'type' => 'text',
+                    'type' => 'text', 
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
             if($val == 'spb_payment_type_id'){
-                $cols['type'] = ['column'=>'type','dbcolumn'=>'spb_payment_types.type',
+                $cols['payment_type'] = ['column'=>'payment_type','dbcolumn'=>'spb_payment_types.payment_type',
                     'caption'=>'Payment',
-                    'type' => 'text',
+                    'type' => 'text', 
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
             if($val == 'spb_status_id'){
                 $cols['status_code'] = ['column'=>'status_code','dbcolumn'=>'spb_statuses.status_code',
                     'caption'=>'Status',
-                    'type' => 'text',
+                    'type' => 'text', 
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
             if($val == 'manifest_id'){
                 $cols['no_manifest'] = ['column'=>'no_manifest','dbcolumn'=>'manifests.no_manifest',
                     'caption'=>'Manifest',
-                    'type' => 'text',
+                    'type' => 'text', 
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
             $cols['no_po'] = ['column'=>'no_po','dbcolumn'=>'items.no_po',
                     'caption'=>'No PO',
-                    'type' => 'text',
+                    'type' => 'text', 
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
         } 
         // modify defaults
+        $cols['no_spb']['readonly'] = 1;
+        $cols['no_spb']['required'] = 1;
+        $cols['customer_id']['required'] = 1;
+        $cols['recipient']['required'] = 1;
+        $cols['address']['required'] = 1;
+        $cols['province_id']['required'] = 1;
+        $cols['city_id']['required'] = 1;
         $cols['customer_id']['caption'] = 'Customer';
         $cols['customer_id']['type'] = 'dropdown';
         $cols['customer_id']['dropdown_model'] = 'App\Customer';
@@ -113,8 +121,12 @@ class SpbController extends Controller
         $cols['spb_status_id']['dropdown_caption'] = 'status';
         $cols['spb_status_id']['B'] = 0;
         $cols['spb_status_id']['R'] = 0;
+        $cols['spb_status_id']['E'] = 0;
+        $cols['spb_status_id']['A'] = 0;
         $cols['address']['B'] = 0;
         $cols['address']['type'] = 'textarea';
+        $cols['created_at']['type'] = 'datetime';
+        $cols['updated_at']['type'] = 'datetime';
         $cols['created_by']['R'] = 0;
         $cols['created_by']['E'] = 0;
         $cols['created_by']['A'] = 0;
@@ -129,6 +141,10 @@ class SpbController extends Controller
         $cols['manifest_id']['R'] = 0;
         $cols['manifest_id']['E'] = 0;
         $cols['manifest_id']['A'] = 0;
+        $cols['branch_id']['B'] = 0;
+        $cols['branch_id']['R'] = 0;
+        $cols['branch_id']['E'] = 0;
+        $cols['branch_id']['A'] = 0;
 
         $this->cols = $cols;
     }
@@ -146,7 +162,7 @@ class SpbController extends Controller
     public function indexjson(Request $request)
     {
         // dd($request->all());
-        $spb = Spb::select('spbs.*','customer','city','province','type','status_code','status','no_manifest')
+        $spb = Spb::select('spbs.*','customer','city','province','payment_type','status_code','status','no_manifest')
         ->addSelect(DB::raw('GROUP_CONCAT(no_po ORDER BY no_po ASC SEPARATOR \', \') as no_po'))
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
@@ -214,12 +230,16 @@ class SpbController extends Controller
     {
         $request->validate([
             'no_spb' => 'required|unique:spbs,no_spb,null,id,deleted_at,NULL',
+            'customer_id' => 'required',
+            'recipient' => 'required',
+            'address' => 'required',
+            'province_id' => 'required',
+            'city_id' => 'required',
         ]);
 
         $requestData = $request->all();
-        $requestData['spb_status_id'] = 1;
+        $requestData['branch_id'] = Auth::user()->branch_id;
         $spb = Spb::create($requestData);
-        Spb_log::create(['spb_id'=>$spb->id,'spb_status_id'=>1,'user_id'=>Auth::user()->id,'log'=>'SPB dibuat']);
         Session::flash('message', 'SPB ditambahkan'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('spb/'.$spb->id.'/item');
@@ -234,7 +254,7 @@ class SpbController extends Controller
     public function show(Spb $spb)
     {
         $cols = $this->cols;        
-        $item = Spb::select('spbs.*','customer','city','province','type')
+        $item = Spb::select('spbs.*','customer','city','province','payment_type')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
@@ -267,12 +287,16 @@ class SpbController extends Controller
     public function update(Request $request, Spb $spb)
     {
         $request->validate([
-            'no_spb' => 'required|unique:spbs,no_spb,'.$spb->id.',id,deleted_at,NULL'
+            'no_spb' => 'required|unique:spbs,no_spb,'.$spb->id.',id,deleted_at,NULL',
+            'customer_id' => 'required',
+            'recipient' => 'required',
+            'address' => 'required',
+            'province_id' => 'required',
+            'city_id' => 'required',
         ]);
 
         $requestData = $request->all();
         Spb::find($spb->id)->update($requestData);
-        Spb_log::create(['spb_id'=>$spb->id,'spb_status_id'=>$request->spb_status_id,'user_id'=>Auth::user()->id,'log'=>'SPB diubah']);
         Session::flash('message', 'SPB diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('spb');
@@ -308,8 +332,33 @@ class SpbController extends Controller
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
-        ->whereNull('manifest_id')
         ->whereRaw('no_spb like \'%'.$request->term.'%\'')
         ->take(10)->get();
+    }
+
+    public function track($spb_id)
+    {
+        $cols = $this->cols;        
+        $spb = Spb::select('spbs.*','customer','status_code','status')
+        ->leftJoin('customers','customer_id','customers.id')
+        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
+        ->where('spbs.id',$spb_id)->first();
+        $track = Spb_track::select('spb_tracks.*','status_code','status')
+        ->where('spb_id',$spb_id)
+        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
+        ->orderBy('created_at','DESC')->get();
+        return view('spb.track',compact('cols','spb','track'));
+    }
+    
+    public function report($spb_id)
+    {
+        $spb = Spb::with('items')->select('spbs.*','customer','customers.address as cust_address','branch','payment_type')
+        ->leftJoin('customers','customer_id','customers.id')
+        ->leftJoin('branches','spbs.branch_id','branches.id')
+        ->leftJoin('spb_payment_types','spb_payment_type_id','spb_payment_types.id')
+        ->where('spbs.id',$spb_id)
+        ->first();
+        $pdf = PDF::loadview('spb.report',compact('spb'),[],['title' => 'Nujeks - SPB_'.$spb->no_spb.'.pdf']);
+    	return $pdf->stream();
     }
 }

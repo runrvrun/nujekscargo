@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Manifest;
 use App\Spb;
-use App\Spb_log;
+use App\Spb_track;
+use App\Spb_warehouse;
 use App\Item;
 use App\Branch;
 use Illuminate\Http\Request;
@@ -45,6 +46,20 @@ class ManifestController extends Controller
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
+            if($val == 'driver_id'){
+                $cols['driver'] = ['column'=>'driver','dbcolumn'=>'users.name',
+                    'caption'=>'Driver',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
+            if($val == 'vehicle_id'){
+                $cols['no_plate'] = ['column'=>'no_plate','dbcolumn'=>'vehicles.no_plate',
+                    'caption'=>'Vehicle',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
         } 
         // modify defaults
         $cols['origin_id']['caption'] = 'Origin';
@@ -69,6 +84,22 @@ class ManifestController extends Controller
         $cols['deleted_at']['R'] = 0;
         $cols['deleted_at']['E'] = 0;
         $cols['deleted_at']['A'] = 0;
+        $cols['driver_id']['R'] = 0;
+        $cols['driver_id']['B'] = 0;
+        $cols['driver_id']['A'] = 0;
+        $cols['driver_id']['caption'] = 'Driver';
+        $cols['driver_id']['type'] = 'dropdown';
+        $cols['driver_id']['dropdown_model'] = 'App\User';
+        $cols['driver_id']['dropdown_value'] = 'id';
+        $cols['driver_id']['dropdown_caption'] = 'name';
+        $cols['vehicle_id']['R'] = 0;
+        $cols['vehicle_id']['B'] = 0;
+        $cols['vehicle_id']['A'] = 0;
+        $cols['vehicle_id']['caption'] = 'Vehicle';
+        $cols['vehicle_id']['type'] = 'dropdown';
+        $cols['vehicle_id']['dropdown_model'] = 'App\Vehicle';
+        $cols['vehicle_id']['dropdown_value'] = 'id';
+        $cols['vehicle_id']['dropdown_caption'] = 'no_plate';
 
         $this->cols = $cols;
     }
@@ -85,10 +116,11 @@ class ManifestController extends Controller
 
     public function indexjson(Request $request)
     {
-        $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination')
+        $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination','users.name as driver','no_plate')
         ->leftJoin('provinces as ori','origin_id','ori.id')
-        ->leftJoin('provinces as des','destination_id','des.id');
-
+        ->leftJoin('provinces as des','destination_id','des.id')
+        ->leftJoin('users','driver_id','users.id')
+        ->leftJoin('vehicles','vehicle_id','vehicles.id');
         
         if($request->startdate > '1990-01-01'){
             $manifest->whereBetween('manifests.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
@@ -227,7 +259,7 @@ class ManifestController extends Controller
         ->where('manifest_id',$manifest_id)
         ->get();
         // return view('manifest.report',compact('manifest','spb'));
-        $pdf = PDF::loadview('manifest.report',compact('manifest','spb'),[],['title' => 'Nujeks - manifest_'.$manifest->no_manifest.'.pdf']);
+        $pdf = PDF::loadview('manifest.report',compact('manifest','spb'),[],['title' => 'Nujeks - Manifest_'.$manifest->no_manifest.'.pdf']);
     	return $pdf->stream();
     }
 
@@ -277,6 +309,7 @@ class ManifestController extends Controller
         $cols['spb_status_id']['B'] = 0;
         $cols['spb_payment_type_id']['B'] = 0;
         $cols['manifest_id']['B'] = 0;
+        $cols['branch_id']['B'] = 0;
         $cols['deleted_at']['B'] = 0;
 
         $manifest = Manifest::select('manifests.*','origins.province as origin','destinations.province as destination')
@@ -330,12 +363,15 @@ class ManifestController extends Controller
     {
         if(!empty($request->sel_spb_id)){
             Spb::find($request->sel_spb_id)->update(['spb_status_id'=>$request->spb_status_id]);
-            Spb_log::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'user_id'=>Auth::user()->id,'log'=>$request->log]);
+            Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
+            if(!empty($request->city_id)){
+                Spb_warehouse::create(['city_id'=>$request->city_id,'user_id'=>$request->user_id]);
+            }
         }elseif(!empty($request->sel_spb_ids)){
             $sel_spb_ids = explode('%2C',$request->sel_spb_ids);
             foreach($sel_spb_ids as $key=>$val){
                 Spb::find($val)->update(['spb_status_id'=>$request->spb_status_id]);
-                Spb_log::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'user_id'=>Auth::user()->id,'log'=>$request->log]);
+                Spb_track::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
             }
         }
         Session::flash('message', 'Status SPB diubah'); 

@@ -61,20 +61,20 @@
 <script>
 $(document).ready(function() {
 
-    $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );
-    $('.browse-table thead tr:eq(0) th').html('');//clear content
-    $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
-        var title = $(this).text();
-        $(this).html( '<input type="text" class="form-control" />' );
-        $( 'input', this ).on( 'keyup change', function () {
-            if ( table.column(i+1).search() !== this.value ) {
-                table
-                    .column(i+1)
-                    .search( this.value )
-                    .draw();
-            }
-        } );
-    } );
+    // $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );
+    // $('.browse-table thead tr:eq(0) th').html('');//clear content
+    // $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
+    //     var title = $(this).text();
+    //     $(this).html( '<input type="text" class="form-control" />' );
+    //     $( 'input', this ).on( 'keyup change', function () {
+    //         if ( table.column(i+1).search() !== this.value ) {
+    //             table
+    //                 .column(i+1)
+    //                 .search( this.value )
+    //                 .draw();
+    //         }
+    //     } );
+    // } );
 
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
@@ -114,7 +114,7 @@ $(document).ready(function() {
               }
             },
             {
-              text: '<i class="ft-trash"></i> Delete', className: 'buttons-deletemulti',
+              text: '<i class="ft-trash"></i> Hapus', className: 'buttons-deletemulti',
               action: function ( e, dt, node, config ) {
 
               }

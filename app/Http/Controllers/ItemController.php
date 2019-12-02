@@ -68,6 +68,7 @@ class ItemController extends Controller
         $cols['length']['type'] = 'number';
         $cols['width']['type'] = 'number';
         $cols['height']['type'] = 'number';
+        $cols['volume']['type'] = 'decimal';
 
         $this->cols = $cols;
     }
@@ -88,7 +89,7 @@ class ItemController extends Controller
     public function indexjson($spb_id)
     {
         // return datatables(Item::selectRaw('items.*, CONCAT_WS(\'x\',length,width,height) as dimension, cast(length*width*height/bale as decimal(10,2))/1000 as volume')
-        return datatables(Item::selectRaw('items.*, CONCAT_WS(\'x\',length,width,height) as dimension, cast(length*width*height/bale as decimal(10,2))/1000 as volume')
+        return datatables(Item::selectRaw('items.*, CONCAT_WS(\'x\',length,width,height) as dimension, cast(length*width*height*bale as decimal(10,3))/1000000 as volume')
         ->where('spb_id',$spb_id)
         )->addColumn('action', function ($dt) {
             return view('item.action',compact('dt'));

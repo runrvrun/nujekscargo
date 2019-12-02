@@ -1,5 +1,5 @@
 <form method="POST" action="/spb/{{$dt->id}}" style="white-space:nowrap">
-<a href="{{ url('spb/'.$dt->id.'/item') }}" class="warning p-0" data-original-title="" title="Barang">
+<!-- <a href="{{ url('spb/'.$dt->id.'/item') }}" class="warning p-0" data-original-title="Barang" title="">
     <i class="ft-package font-medium-3 mr-2"></i>
 </a>
 <a href="{{ url('spb/'.$dt->id.'/log') }}" class="info p-0" data-original-title="" title="Tracking">
@@ -7,6 +7,9 @@
 </a>
 <a href="{{ url('spb/'.$dt->id) }}" class="primary p-0" data-original-title="" title="Detail">
     <i class="ft-zoom-in font-medium-3 mr-2"></i>
+</a> -->
+<a href="{{ url('spb/'.$dt->id.'/report') }}" target="_blank" class="primary p-0" data-original-title="" title="SPB Report">
+    <i class="ft-printer font-medium-3 mr-2"></i>
 </a>
 <a href="{{ url('spb/'.$dt->id.'/edit') }}" class="success p-0" data-original-title="" title="Edit">
     <i class="ft-edit-2 font-medium-3 mr-2"></i>

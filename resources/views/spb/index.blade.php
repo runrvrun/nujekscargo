@@ -70,6 +70,7 @@
 <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/datatables.min.css">
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <style>
+  .status_code a{color:#fff}
   .WHS,.OTW,.DLY,.RCV,.BTO,.ORD,.NEW,.SEN,.IOP,.PAI,.CLR{display: inline-block; padding: 0.375rem 0.75rem;font-size: 1rem;line-height: 1;border-radius: 0.25rem;color: #fff;background-color: #000;}
   .WHS{background-color: #ff8040;}
   .OTW{background-color: #0080ff;}
@@ -93,21 +94,20 @@
 <script>
 $(document).ready(function() {
 
-    $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );
-    
-    $('.browse-table thead tr:eq(0) th').html('');//clear content
-    $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
-        var title = $(this).text();
-        $(this).html( '<input type="text" class="form-control" />' );
-        $( 'input', this ).on( 'keyup change', function () {
-            if ( table.column(i+1).search() !== this.value ) {
-                table
-                    .column(i+1)
-                    .search( this.value )
-                    .draw();
-            }
-        } );
-    } );
+    // $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );    
+    // $('.browse-table thead tr:eq(0) th').html('');//clear content
+    // $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
+    //     var title = $(this).text();
+    //     $(this).html( '<input type="text" class="form-control" />' );
+    //     $( 'input', this ).on( 'keyup change', function () {
+    //         if ( table.column(i+1).search() !== this.value ) {
+    //             table
+    //                 .column(i+1)
+    //                 .search( this.value )
+    //                 .draw();
+    //         }
+    //     } );
+    // } );
 
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
@@ -154,7 +154,7 @@ $(document).ready(function() {
               }
             },
             {
-              text: '<i class="ft-trash"></i> Delete', className: 'buttons-deletemulti',
+              text: '<i class="ft-trash"></i> Hapus', className: 'buttons-deletemulti',
               action: function ( e, dt, node, config ) {
               }
             },  
@@ -170,11 +170,11 @@ $(document).ready(function() {
                 'selectRow': true
             }
         },{
-            targets: ['id','created_at','updated_at','created_by','updated_by'],
+            targets: ['id','updated_at','created_by','updated_by'],
             visible: false,
             searchable: false,
         },{
-            targets: ['no_po','no_manifest'],
+            targets: ['no_po','no_manifest','province','city','pic_contact','pic_phone','type'],
             visible: false,
         }
         ],
@@ -185,6 +185,8 @@ $(document).ready(function() {
         order: [[1, 'DESC']],
         fnRowCallback : function(row, data) {
           $('td.status_code', row).addClass(data['status_code']);
+          $('td.status_code', row).wrapInner('<a title="Tracking" href="{{ url('spb') }}/'+ data['id'] +'/track" />');
+          $('td.no_spb', row).wrapInner('<a title="Daftar Barang" href="{{ url('spb') }}/'+ data['id'] +'/item" />');
         }
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');

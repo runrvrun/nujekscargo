@@ -108,9 +108,9 @@
             </table>
             <table style="width: 100%;border:none;margin-top:40px;">
                 <tr>
-                    <td style="text-align:center;border:none">PT NJE Jakarta<br/><br/><br/><br/><br/><br/>Boni Sitohang</td>
-                    <td style="text-align:center;border:none">Pengemudi<br/><br/><br/><br/><br/><br/>TTD & Nama Jelas</td>
-                    <td style="text-align:center;border:none"><br/><br/><br/><br/><br/><br/>TTD & Nama Jelas</td>
+                    <td style="text-align:center">PT NJE Jakarta<br/><br/><br/><br/><br/><br/>Boni Sitohang</td>
+                    <td style="text-align:center">Pengemudi<br/><br/><br/><br/><br/><br/>TTD & Nama Jelas</td>
+                    <td style="text-align:center"><br/><br/><br/><br/><br/><br/>TTD & Nama Jelas</td>
                 </tr>
             </table>
         </main>

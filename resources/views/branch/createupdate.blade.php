@@ -21,7 +21,7 @@
           <h4 class="card-title">Kantor Cabang</h4>
         </div>
         <div class="card-content">
-          @component('components.createupdate',compact('cols','item'))
+          @component('components.createupdate',['cols'=>$cols,'item'=>$items ?? null])
             @slot('route')
               branch
             @endslot

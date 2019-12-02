@@ -21,7 +21,7 @@
           <h4 class="card-title">Manifest</h4>
         </div>
         <div class="card-content">
-          @component('components.createupdate',compact('cols','item'))
+          @component('components.createupdate',['cols'=>$cols,'item'=>$items ?? null])
             @slot('route')
               manifest
             @endslot
@@ -37,8 +37,20 @@
         </div>
 @endsection
 @section('pagecss')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("select[name='vehicle_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='vehicle_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='vehicle_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='driver_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='driver_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='driver_id']").attr('data-size','3'); // dropdown search with bootstrap select
+});
+</script>
 <script>
 $(document).ready(function(){
   @if(isset($no_manifest))

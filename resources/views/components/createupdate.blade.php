@@ -11,63 +11,71 @@
                       @switch($val['type'])
                         @case('dropdown')
                         <div class="form-group row">
-                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']): </label>
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
                           {{ Form::select($val['column'], 
                             $val['dropdown_model']::pluck($val['dropdown_caption'],$val['dropdown_value']), 
                             old($val['column'],$item->{$val['column']} ?? null), 
-                            array('class' => 'form-control')) }}
+                            array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
                           </div>
                         </div>    
                         @break
                         @case('enum')
                         <div class="form-group row">
-                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']): </label>
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
                           {{ Form::select($val['column'], 
                             $val['enum_values'], 
                             old($val['column'],$item->{$val['column']} ?? null), 
-                            array('class' => 'form-control')) }}
+                            array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
                           </div>
                         </div>    
                         @break
                         @case('textarea')
                         <div class="form-group row">
-                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']): </label>
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
-                          {{ Form::textarea($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control','rows'=>4)) }}
+                          {{ Form::textarea($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'','rows'=>4)) }}
                           </div>
                         </div>
                         @break
                         @case('email')
                         <div class="form-group row">
-                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']): </label>
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
-                          {{ Form::email($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control')) }}
+                          {{ Form::email($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
                           </div>
                         </div>
                         @break
                         @case('number')
                         <div class="form-group row">
-                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']): </label>
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
-                          {{ Form::number($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control')) }}
+                          {{ Form::number($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
+                          </div>
+                        </div>
+                        @break
+                        @case('decimal')
+                        <div class="form-group row">
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
+                          <div class="col-md-9">
+                          {{ Form::number($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
                           </div>
                         </div>
                         @break
                         @case('password')
                         <div class="form-group row">
-                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']): </label>
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
-                          {{ Form::password($val['column'], array('class' => 'form-control')) }}
+                          {{ Form::password($val['column'], array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
                           </div>
                         </div>
                         @break
                         @default
                         <div class="form-group row">
-                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']): </label>
+                          <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
-                          {{ Form::text($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control')) }}
+                          {{ Form::text($val['column'], old($val['column'],$item->{$val['column']} ?? null), array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
                           </div>
                         </div>
                       @endswitch

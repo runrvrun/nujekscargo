@@ -41,6 +41,11 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function username()
+    {
+        return 'username';
+    }
+
     public function authenticate(Request $request)
     {
         $priv = \App\Role_privilege::where('role_id',1)->get();
@@ -48,7 +53,7 @@ class LoginController extends Controller
             $privilege[$pri->page_id] = ['browse'=>$pri->browse,'add'=>$pri->add,'edit'=>$pri->edit,'delete'=>$pri->delete];
         }
         session(['privilege'=>$privilege]);
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])) {
+        if (Auth::attempt(['username' => $request->username, 'password' => $request->password, 'status' => 1])) {
         return redirect()->intended('/');
         }else{
             return redirect('login')->withErrors([

@@ -23,7 +23,6 @@
         </div>
         <div class="card-header">
         <h5>{{ $spb->customer }} <i class="ft-arrow-right"></i> {{ $spb->recipient }}</h5>
-        <br/><p>Tanggal pengiriman: {{ $spb->created_at->format('j F Y') }}</p>
         </div>
         <div class="card-content ">
           <div class="card-body card-dashboard table-responsive">
@@ -68,26 +67,25 @@
 <script>
 $(document).ready(function() {
 
-    $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );
-    
-    $('.browse-table thead tr:eq(0) th:first').html('');//clear content
-    $('.browse-table thead tr:eq(0) th:last').html('');//clear content
-    $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
-        var title = $(this).text();
-        if((title == 'Dimensi') || (title == 'Volume')) {// no search box
-          $(this).html('');
-          return;
-        };
-        $(this).html( '<input type="text" class="form-control" />' );
-        $( 'input', this ).on( 'keyup change', function () {
-            if ( table.column(i+1).search() !== this.value ) {
-                table
-                    .column(i+1)
-                    .search( this.value )
-                    .draw();
-            }
-        } );
-    } );
+    // $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );    
+    // $('.browse-table thead tr:eq(0) th:first').html('');//clear content
+    // $('.browse-table thead tr:eq(0) th:last').html('');//clear content
+    // $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
+    //     var title = $(this).text();
+    //     if((title == 'Dimensi') || (title == 'Volume')) {// no search box
+    //       $(this).html('');
+    //       return;
+    //     };
+    //     $(this).html( '<input type="text" class="form-control" />' );
+    //     $( 'input', this ).on( 'keyup change', function () {
+    //         if ( table.column(i+1).search() !== this.value ) {
+    //             table
+    //                 .column(i+1)
+    //                 .search( this.value )
+    //                 .draw();
+    //         }
+    //     } );
+    // } );
 
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
@@ -102,8 +100,8 @@ $(document).ready(function() {
           @foreach($cols as $val)
           @if($val['B'])
           { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}'
-          @if($val['type'] == 'number')
-          , render: $.fn.dataTable.render.number( ',', '.', 2 ) 
+          @if($val['type'] == 'decimal')
+          , render: $.fn.dataTable.render.number( ',', '.', 3 ) 
           @endif
           },
           @endif
@@ -136,6 +134,12 @@ $(document).ready(function() {
 
               }
             },  
+            {
+              text: '<i class="ft-printer"></i> Cetak SPB', className: 'buttons-cetakspb',              
+              action: function ( e, dt, button, config ) {
+                window.open('{{ url('spb/'.$spb->id.'/report') }}');
+              }
+            }, 
         ],
         lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
         columnDefs: [ {

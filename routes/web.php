@@ -33,7 +33,8 @@ Route::group( ['middleware' => 'auth' ], function()
     Route::get('/spb/csvall','SpbController@csvall');
     Route::get('/spb/destroymulti','SpbController@destroymulti');
     Route::get('/spb/searchjson','SpbController@searchjson');
-    Route::get('/spb/{a}/tracking','SpbController@tracking');
+    Route::get('/spb/{a}/track','SpbController@track');
+    Route::get('/spb/{a}/report','SpbController@report');
     Route::resource('/spb', 'SpbController');
     Route::get('/manifest/{a}/spb/indexjson','ManifestController@spbindexjson');
     Route::get('/manifest/{a}/spb/csvall','ManifestController@spbcsvall');

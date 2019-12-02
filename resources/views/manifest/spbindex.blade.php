@@ -79,6 +79,10 @@
           {{ Form::hidden('sel_spb_ids',null,['id'=>'sel_spb_ids']) }}
           Status: {{ Form::select('spb_status_id',\App\Spb_status::pluck('status','id'),null,['class'=>'form-control','id'=>'spb_status_id']) }}
           Keterangan: {{ Form::textarea('log',null,['class'=>'form-control','rows'=>3]) }}
+          <div id="branchdriver" style="display:none">
+          @lang('City'): {{ Form::select('city_id',\App\City::pluck('city','id'),null,['class'=>'form-control','id'=>'city_id','placeholder'=>' ']) }}
+          @lang('PIC'): {{ Form::select('user_id',\App\User::pluck('name','id'),null,['class'=>'form-control','id'=>'user_id','placeholder'=>' ']) }}
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Batal</button>
@@ -93,6 +97,7 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/') }}/app-assets/vendors/css/tables/datatable/datatables.min.css">
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <style>
+  .status_code a{color:#fff}
   .WHS,.OTW,.DLY,.RCV,.BTO,.ORD,.NEW,.SEN,.IOP,.PAI,.CLR{display: inline-block; padding: 0.375rem 0.75rem;font-size: 1rem;line-height: 1;border-radius: 0.25rem;color: #fff;background-color: #000;}
   .WHS{background-color: #ff8040;}
   .OTW{background-color: #0080ff;}
@@ -102,6 +107,7 @@
   .PAI,.CLR{background-color: #008000;}
 </style>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
 <script src="{{ asset('/') }}/app-assets/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
@@ -116,22 +122,30 @@
 <script>
 $(document).ready(function() {
 
-    $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );
-    
-    $('.browse-table thead tr:eq(0) th:first').html('');//clear content
-    $('.browse-table thead tr:eq(0) th:last').html('');//clear content
-    $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
-        var title = $(this).text();
-        $(this).html( '<input type="text" class="form-control" />' );
-        $( 'input', this ).on( 'keyup change', function () {
-            if ( table.column(i+1).search() !== this.value ) {
-                table
-                    .column(i+1)
-                    .search( this.value )
-                    .draw();
-            }
-        } );
-    } );
+    // $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );    
+    // $('.browse-table thead tr:eq(0) th:first').html('');//clear content
+    // $('.browse-table thead tr:eq(0) th:last').html('');//clear content
+    // $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
+    //     var title = $(this).text();
+    //     $(this).html( '<input type="text" class="form-control" />' );
+    //     $( 'input', this ).on( 'keyup change', function () {
+    //         if ( table.column(i+1).search() !== this.value ) {
+    //             table
+    //                 .column(i+1)
+    //                 .search( this.value )
+    //                 .draw();
+    //         }
+    //     } );
+    // } );
+
+    $("#spb_status_id").change(function(){
+      var sel_status = $("#spb_status_id").val();
+      if(sel_status == 1){
+        $("#branchdriver").show();
+      }else{
+        $("#branchdriver").hide();
+      }
+    });
 
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
@@ -172,7 +186,7 @@ $(document).ready(function() {
               }
             },
             {
-              text: '<i class="ft-trash"></i> Delete', className: 'buttons-deletemulti',
+              text: '<i class="ft-slash"></i> Keluarkan', className: 'buttons-deletemulti',
               action: function ( e, dt, node, config ) {
 
               }
@@ -193,9 +207,10 @@ $(document).ready(function() {
             visible: false,
             searchable: false,
         },{
-            targets: ['no_po','address','pic_contact','pic_phone'],
+            targets: ['no_po','address','pic_contact','pic_phone','no_manifest','province','city','type'],
             visible: false,
-        } ],
+        }
+        ],
         select: {
             style:    'multi',
             selector: 'td:first-child'
@@ -203,6 +218,8 @@ $(document).ready(function() {
         order: [[1, 'DESC']],
         fnRowCallback : function(row, data) {
           $('td.status_code', row).addClass(data['status_code']);
+          $('td.status_code', row).wrapInner('<a title="Tracking" href="{{ url('spb') }}/'+ data['id'] +'/track" />');
+          $('td.no_spb', row).wrapInner('<a title="Daftar Barang" href="{{ url('spb') }}/'+ data['id'] +'/item" />');
         }
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
@@ -273,7 +290,7 @@ $(document).ready(function() {
         search: function() {
             // custom minLength
             var term = extractLast( this.value );
-            if ( term.length < 5 ) {
+            if ( term.length < 3 ) {
             return false;
             }
         },
@@ -299,5 +316,16 @@ $(document).ready(function() {
             .appendTo( ul );
         };
     });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("select[name='user_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='user_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='user_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='city_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='city_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='city_id']").attr('data-size','4'); // dropdown search with bootstrap select
+});
 </script>
 @endsection

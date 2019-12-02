@@ -21,7 +21,7 @@
           <h4 class="card-title">Armada</h4>
         </div>
         <div class="card-content">
-          @component('components.createupdate',compact('cols','item'))
+          @component('components.createupdate',['cols'=>$cols,'item'=>$items ?? null])
             @slot('route')
               vehicle
             @endslot
