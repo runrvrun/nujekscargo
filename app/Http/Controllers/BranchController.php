@@ -150,7 +150,7 @@ class BranchController extends Controller
     public function edit(Branch $branch)
     {
         $cols = $this->cols;        
-        $item = branch::find($branch->id);
+        $item = Branch::find($branch->id);
         return view('branch.createupdate',compact('cols','item'));
     }
 

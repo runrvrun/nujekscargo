@@ -73,7 +73,7 @@
               <li class=" nav-item"><a href="{{ url('/manifest') }}"><i class="ft-layers"></i><span data-i18n="" class="menu-title">Manifest</span></a>
               </li>
                   @endif
-              <li class="has-sub nav-item"><a href="#"><i class="ft-aperture"></i><span data-i18n="" class="menu-title">Master Data</span></a>
+              <li class="has-sub nav-item" id="masterdata"><a href="#"><i class="ft-aperture"></i><span data-i18n="" class="menu-title">Master Data</span></a>
                 <ul class="menu-content">
                   @if(session('privilege')[4]["browse"] ?? 0)
                   <li><a href="{{ url('/vehicle') }}" class="menu-item"><i class="ft-shopping-cart"></i>Armada</a>
@@ -89,7 +89,7 @@
                   @endif
                 </ul>
               </li>
-              <li class="has-sub nav-item"><a href="#"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">User Management</span></a>
+              <li class="has-sub nav-item" id="usermgt"><a href="#"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">User Management</span></a>
                 <ul class="menu-content">
                   @if(session('privilege')[7]["browse"] ?? 0)
                   <li><a href="{{ url('/user') }}" class="menu-item"><i class="ft-user"></i>User</a>
@@ -206,6 +206,16 @@
             $('.home-nav').addClass('active');
           }
       })
+    </script>
+    <script>
+      $(document).ready(function(){
+        if(!$("#masterdata>ul").children().length){
+          $("#masterdata").hide();
+        }
+        if(!$("#usermgt>ul").children().length){
+          $("#usermgt").hide();
+        }
+      });
     </script>
     @yield('pagejs')
     <!-- END PAGE LEVEL JS-->

@@ -32,14 +32,14 @@ class ManifestController extends Controller
                     'B'=>1,'R'=>1,'E'=>1,'A'=>1,'D'=>1
                 ];
             // add joined columns, if any
-            if($val == 'origin_id'){
+            if($val == 'origin_province_id'){
                 $cols['origin'] = ['column'=>'origin','dbcolumn'=>'ori.province',
                     'caption'=>'Origin',
                     'type' => 'text',
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
-            if($val == 'destination_id'){
+            if($val == 'destination_province_id'){
                 $cols['destination'] = ['column'=>'destination','dbcolumn'=>'des.province',
                     'caption'=>'Destination',
                     'type' => 'text',
@@ -62,18 +62,18 @@ class ManifestController extends Controller
             }
         } 
         // modify defaults
-        $cols['origin_id']['caption'] = 'Origin';
-        $cols['origin_id']['type'] = 'dropdown';
-        $cols['origin_id']['dropdown_model'] = 'App\Province';
-        $cols['origin_id']['dropdown_value'] = 'id';
-        $cols['origin_id']['dropdown_caption'] = 'province';
-        $cols['origin_id']['B'] = 0;
-        $cols['destination_id']['caption'] = 'Destination';
-        $cols['destination_id']['type'] = 'dropdown';
-        $cols['destination_id']['dropdown_model'] = 'App\Province';
-        $cols['destination_id']['dropdown_value'] = 'id';
-        $cols['destination_id']['dropdown_caption'] = 'province';
-        $cols['destination_id']['B'] = 0;
+        $cols['origin_province_id']['caption'] = 'Origin';
+        $cols['origin_province_id']['type'] = 'dropdown';
+        $cols['origin_province_id']['dropdown_model'] = 'App\Province';
+        $cols['origin_province_id']['dropdown_value'] = 'id';
+        $cols['origin_province_id']['dropdown_caption'] = 'province';
+        $cols['origin_province_id']['B'] = 0;
+        $cols['destination_province_id']['caption'] = 'Destination';
+        $cols['destination_province_id']['type'] = 'dropdown';
+        $cols['destination_province_id']['dropdown_model'] = 'App\Province';
+        $cols['destination_province_id']['dropdown_value'] = 'id';
+        $cols['destination_province_id']['dropdown_caption'] = 'province';
+        $cols['destination_province_id']['B'] = 0;
         $cols['created_by']['R'] = 0;
         $cols['created_by']['E'] = 0;
         $cols['created_by']['A'] = 0;
@@ -116,12 +116,22 @@ class ManifestController extends Controller
 
     public function indexjson(Request $request)
     {
+        /*
+        * RULES
+        * user cabang hanya bisa lihat manifest berasal dari cabangnya
+        * operasional cabang hanya bisa lihat manifest dari cabangnya yang drivernya dia
+        */
+        $userbranch = Branch::find(Auth::user()->branch_id);
         $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination','users.name as driver','no_plate')
-        ->leftJoin('provinces as ori','origin_id','ori.id')
-        ->leftJoin('provinces as des','destination_id','des.id')
+        ->leftJoin('provinces as ori','origin_province_id','ori.id')
+        ->leftJoin('provinces as des','destination_province_id','des.id')
         ->leftJoin('users','driver_id','users.id')
         ->leftJoin('vehicles','vehicle_id','vehicles.id');
         
+        if($userbranch->type != 'Pusat'){
+            $manifest->where('origin_province_id',$userbranch->province_id);
+        }
+
         if($request->startdate > '1990-01-01'){
             $manifest->whereBetween('manifests.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
         }
@@ -313,8 +323,8 @@ class ManifestController extends Controller
         $cols['deleted_at']['B'] = 0;
 
         $manifest = Manifest::select('manifests.*','origins.province as origin','destinations.province as destination')
-        ->leftJoin('provinces as origins','origin_id','origins.id')
-        ->leftJoin('provinces as destinations','destination_id','destinations.id')
+        ->leftJoin('provinces as origins','origin_province_id','origins.id')
+        ->leftJoin('provinces as destinations','destination_province_id','destinations.id')
         ->where('manifests.id',$manifest_id)->first();
         return view('manifest.spbindex',compact('cols','manifest'));
     }

@@ -73,10 +73,10 @@
                         <p>JL. KEMIRI NO 41 B. DUSUN IV. TANJUNG GUSTA
 KEC SUNGGAL, KAB DELI SERDANG - SUMATERA
 UTARA</p>
-                        <p>No.Telp : 0618446829</p>
-                        <p>No.Fax : 0618476629</p>
+                        <p>No.Telp : {{ $userbranch->phone }}</p>
+                        <p>No.Fax : {{ $userbranch->fax }}</p>
                         <p>Website : http://www.nujeks.com</p>
-                        <p>Email : cs.mes@nujeks.com, operasional.mes@nujeks.com</p>
+                        <p>Email : {{ $userbranch->email }} {{ $userbranch->email_acc}}</p>
                     </td>
                     <td style="width:50%">
                         <h1>{{ $spb->no_spb }}</h1>

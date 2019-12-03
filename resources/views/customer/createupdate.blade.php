@@ -21,7 +21,7 @@
           <h4 class="card-title">Pelanggan</h4>
         </div>
         <div class="card-content">
-          @component('components.createupdate',['cols'=>$cols,'item'=>$items ?? null])
+          @component('components.createupdate',['cols'=>$cols,'item'=>$item ?? null])
             @slot('route')
               customer
             @endslot

@@ -352,13 +352,14 @@ class SpbController extends Controller
     
     public function report($spb_id)
     {
+        $userbranch = Branch::find(Auth::user()->branch_id);
         $spb = Spb::with('items')->select('spbs.*','customer','customers.address as cust_address','branch','payment_type')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('branches','spbs.branch_id','branches.id')
         ->leftJoin('spb_payment_types','spb_payment_type_id','spb_payment_types.id')
         ->where('spbs.id',$spb_id)
         ->first();
-        $pdf = PDF::loadview('spb.report',compact('spb'),[],['title' => 'Nujeks - SPB_'.$spb->no_spb.'.pdf']);
+        $pdf = PDF::loadview('spb.report',compact('spb','userbranch'),[],['title' => 'Nujeks - SPB_'.$spb->no_spb.'.pdf']);
     	return $pdf->stream();
     }
 }

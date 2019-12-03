@@ -48,13 +48,13 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        $priv = \App\Role_privilege::where('role_id',1)->get();
-        foreach($priv as $key=>$pri){
-            $privilege[$pri->page_id] = ['browse'=>$pri->browse,'add'=>$pri->add,'edit'=>$pri->edit,'delete'=>$pri->delete];
-        }
-        session(['privilege'=>$privilege]);
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password, 'status' => 1])) {
-        return redirect()->intended('/');
+            $priv = \App\Role_privilege::where('role_id',Auth::user()->role_id)->get();
+            foreach($priv as $key=>$pri){
+                $privilege[$pri->page_id] = ['browse'=>$pri->browse,'add'=>$pri->add,'edit'=>$pri->edit,'delete'=>$pri->delete];
+            }
+            session(['privilege'=>$privilege]);
+            return redirect()->intended('/');
         }else{
             return redirect('login')->withErrors([
                 $this->username() => Lang::get('auth.failed'),
