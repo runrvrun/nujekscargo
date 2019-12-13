@@ -19,7 +19,7 @@
           <a href="{{ url('spb') }}" class="btn btn-primary pull-left"><i class="ft-arrow-left"></i> Kembali ke SPB</a>
         </div>
         <div class="card-header">
-            <h4 class="card-title">{{ $spb->no_spb }}</h4>
+            <h4 class="card-title"><span class="{{ $spb->status_code }}">{{ $spb->status_code }}</span> {{ $spb->no_spb }}</h4>
         </div>
         <div class="card-header">
         <h5>{{ $spb->customer }} <i class="ft-arrow-right"></i> {{ $spb->recipient }}</h5>
@@ -53,6 +53,16 @@
 @section('pagecss')
 <link rel="stylesheet" type="text/css" href="{{ asset('/') }}/app-assets/vendors/css/tables/datatable/datatables.min.css">
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
+<style>
+  .status_code a{color:#fff}
+  .WHS,.OTW,.DLY,.RCV,.BTO,.ORD,.NEW,.SEN,.IOP,.PAI,.CLR{display: inline-block; padding: 0.375rem 0.75rem;font-size: 1rem;line-height: 1;border-radius: 0.25rem;color: #fff;background-color: #000;}
+  .WHS{background-color: #ff8040;}
+  .OTW{background-color: #0080ff;}
+  .DLY{background-color: #ffff00;color:#000;}
+  .RCV{background-color: #408080;}
+  .BTO,.ORD{background-color: #FF586B;}
+  .PAI,.CLR{background-color: #008000;}
+</style>
 @endsection
 @section('pagejs')
 <script src="{{ asset('/') }}/app-assets/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>

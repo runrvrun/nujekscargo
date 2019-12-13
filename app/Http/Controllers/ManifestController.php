@@ -131,6 +131,11 @@ class ManifestController extends Controller
         if($userbranch->type != 'Pusat'){
             $manifest->where('origin_province_id',$userbranch->province_id);
         }
+        
+        // operasional cabang hanya tampilkan yang dia sebagai driver
+        if(Auth::user()->role_id == 9){
+            $manifest->where('driver_id',Auth::user()->id);
+        }
 
         if($request->startdate > '1990-01-01'){
             $manifest->whereBetween('manifests.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
@@ -375,13 +380,16 @@ class ManifestController extends Controller
             Spb::find($request->sel_spb_id)->update(['spb_status_id'=>$request->spb_status_id]);
             Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
             if(!empty($request->city_id)){
-                Spb_warehouse::create(['city_id'=>$request->city_id,'user_id'=>$request->user_id]);
+                Spb_warehouse::create(['spb_id'=>$request->sel_spb_id,'city_id'=>$request->city_id,'user_id'=>$request->user_id]);
             }
         }elseif(!empty($request->sel_spb_ids)){
             $sel_spb_ids = explode('%2C',$request->sel_spb_ids);
             foreach($sel_spb_ids as $key=>$val){
                 Spb::find($val)->update(['spb_status_id'=>$request->spb_status_id]);
                 Spb_track::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
+                if(!empty($request->city_id)){
+                    Spb_warehouse::create(['spb_id'=>$val,'city_id'=>$request->city_id,'user_id'=>$request->user_id]);
+                }
             }
         }
         Session::flash('message', 'Status SPB diubah'); 

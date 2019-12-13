@@ -6,8 +6,10 @@
                 footer: page-footer;
             }
             body{
-                font-family: "Arial";
+                /* font-family: "Avant Garde"; */
+                font-family: "Rubik", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
                 font-size: 10pt;
+                font-weight: 100;
                 text-transform: uppercase;
             }
             h1{
@@ -70,9 +72,7 @@
                             <img src="images/logo-nujeks.png" />
                         </div><br/>
                         <h2>PT NUSANTARA JAYA EKSPRESS</h2>
-                        <p>JL. KEMIRI NO 41 B. DUSUN IV. TANJUNG GUSTA
-KEC SUNGGAL, KAB DELI SERDANG - SUMATERA
-UTARA</p>
+                        <p>{{ $userbranch->address }}</p>
                         <p>No.Telp : {{ $userbranch->phone }}</p>
                         <p>No.Fax : {{ $userbranch->fax }}</p>
                         <p>Website : http://www.nujeks.com</p>

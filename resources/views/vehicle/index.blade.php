@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | Armada</title>
+    <title>@lang('Vehicle')</title>
 @endsection
 
 @section('content')
@@ -16,7 +16,7 @@
       <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ ucfirst(Session::get('message')) }}</p>
       @endif
         <div class="card-header">
-          <h4 class="card-title">Armada</h4>
+          <h4 class="card-title">@lang('Vehicle')</h4>
         </div>
         <div class="card-content ">
           <div class="card-body card-dashboard table-responsive">

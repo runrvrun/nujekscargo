@@ -26,15 +26,6 @@
         </div>
         <hr/>
         <div class="card-content ">
-        <form class="form-inline" method="POST" action="{{ url('manifest/spb/setmanifestmulti') }}">
-            @csrf
-            <div class="form-group mx-sm-3 mb-2 ui-widget">
-                <label for="spb" class="mr-2">SPB</label>
-                {{ Form::hidden('manifest_id',$manifest->id) }}
-                <input type="spb" name="spb_add" size=50 class="form-control" id="spb" placeholder="Cari SPB">
-            </div>
-            <button type="submit" class="btn btn-primary mb-2"><i class="ft-plus"></i>Tambahkan SPB</button>
-        </form>
           <div class="card-body card-dashboard table-responsive">
             <table class="table browse-table">
               <thead>
@@ -62,12 +53,51 @@
 @endsection
 @section('modal')
 <!-- Modal -->
+<div class="modal fade text-left bd-example-modal-lg" id="spb-add-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel1">Tambah SPB</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">          
+          @csrf
+          {{ Form::hidden('manifest_id', $manifest->id) }}
+            <div class="input-group row">
+              <div class="col-sm-4">
+                <input id="searchspbterm" type="text" class="form-control" placeholder="Cari SPB">
+              </div>
+                <span class="input-group-btn">
+                    <button id="searchspbbutton" class="btn btn-primary" type="button"><span class="ft-search"></span>Cari</button>
+                </span>
+            </div>
+            <div id="searchspbresult" style="height:250px; overflow-y:scroll">
+            </div>
+          <hr/>          
+          <form class="form-inline" method="POST" action="{{ url('manifest/spb/setmanifestmulti') }}">
+              @csrf
+              <div class="form-group mx-sm-3 mb-2 ui-widget">
+                  {{ Form::hidden('manifest_id',$manifest->id) }}
+                  <input name="spb_add" size=65 class="form-control" id="spb2" placeholder="SPB dipilih">
+              </div>
+                  <button type="submit" class="btn btn-primary mb-2"><i class="ft-plus"></i>Tambah ke Manifest</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Batal</button>
+      </div>
+    </div>
+  </div>
+</div>   
+<!-- Modal -->
 <div class="modal fade text-left" id="spb-status-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" style="display: none;" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form action="/manifest/spb/updatestatus" method="POST">
       <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel1">Update SPB Status: no_spb</h4>
+        <h4 class="modal-title" id="myModalLabel1">Update SPB Status</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
@@ -78,7 +108,7 @@
           {{ Form::hidden('sel_spb_id',null,['id'=>'sel_spb_id']) }}
           {{ Form::hidden('sel_spb_ids',null,['id'=>'sel_spb_ids']) }}
           Status: {{ Form::select('spb_status_id',\App\Spb_status::pluck('status','id'),null,['class'=>'form-control','id'=>'spb_status_id']) }}
-          Keterangan: {{ Form::textarea('log',null,['class'=>'form-control','rows'=>3]) }}
+          Keterangan: {{ Form::textarea('track',null,['class'=>'form-control','rows'=>3]) }}
           <div id="branchdriver" style="display:none">
           @lang('City'): {{ Form::select('city_id',\App\City::pluck('city','id'),null,['class'=>'form-control','id'=>'city_id','placeholder'=>' ']) }}
           @lang('PIC'): {{ Form::select('user_id',\App\User::pluck('name','id'),null,['class'=>'form-control','id'=>'user_id','placeholder'=>' ']) }}
@@ -105,6 +135,10 @@
   .RCV{background-color: #408080;}
   .BTO,.ORD{background-color: #FF586B;}
   .PAI,.CLR{background-color: #008000;}
+
+  .btn-block{
+    text-align:left;
+  }
 </style>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
@@ -121,23 +155,6 @@
 <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>    
 <script>
 $(document).ready(function() {
-
-    // $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );    
-    // $('.browse-table thead tr:eq(0) th:first').html('');//clear content
-    // $('.browse-table thead tr:eq(0) th:last').html('');//clear content
-    // $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
-    //     var title = $(this).text();
-    //     $(this).html( '<input type="text" class="form-control" />' );
-    //     $( 'input', this ).on( 'keyup change', function () {
-    //         if ( table.column(i+1).search() !== this.value ) {
-    //             table
-    //                 .column(i+1)
-    //                 .search( this.value )
-    //                 .draw();
-    //         }
-    //     } );
-    // } );
-
     $("#spb_status_id").change(function(){
       var sel_status = $("#spb_status_id").val();
       if(sel_status == 1){
@@ -173,8 +190,13 @@ $(document).ready(function() {
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         buttons: [
+            @if(session('privilege')[3]["add"] ?? 0)
             {
-              text:'<i class="ft-eye"></i> Ubah Status', className: 'buttons-statusmulti',
+              text:'<i class="ft-map"></i><i class="ft-plus"></i> SPB', className: 'buttons-addspb',
+            },
+            @endif
+            {
+              text:'<i class="ft-box"></i><i class="ft-chevrons-right"></i> Status', className: 'buttons-statusmulti',
             },
             { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
             {
@@ -226,6 +248,7 @@ $(document).ready(function() {
     $('.buttons-add').addClass('btn mr-1');
     $('.buttons-deletemulti').addClass('btn-danger mr-1');
     $('.buttons-statusmulti').addClass('btn-info mr-1');
+    $('.buttons-addspb').addClass('btn-warning mr-1');
 
     $('.buttons-deletemulti').click(function(){
       var deleteids_arr = [];
@@ -260,6 +283,36 @@ $(document).ready(function() {
           $("#spb-status-modal").modal('show');
         } 
       }
+    });
+
+    $('.buttons-addspb').click(function(){
+      $("#spb-add-modal").modal('show');
+    });
+
+    $('#searchspbterm').keypress(function(event){
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){
+          $('#searchspbbutton').click();
+        }
+    });
+    $('#searchspbbutton').click(function(){
+      $("#searchspbresult").empty();
+      var term = $('#searchspbterm').val();
+      $.ajax({
+        url: "{{ url('/spb/searchjson') }}", 
+        data: {term: term, limit: 100}, 
+        success: function(result){
+        $.each(result, function(k,v) {
+          $('#searchspbresult').append( '<button class="btn btn-block btn-outline-primary spbresult mr-1" data-nospb="'+v.value+'" title="'+v.desc+'">'+v.value+' - '+v.desc+'</button>' );
+        });
+      }});
+    });
+    $("#searchspbresult").on('click', '.spbresult', function() {
+      $(this).toggleClass("btn-outline-primary");
+      $(this).toggleClass("btn-primary");      
+      var nospb = $(this).data('nospb');
+      var $date = $('#spb2');
+      $date.val($date.val() + nospb + ',');
     });
 });
 </script>

@@ -43,7 +43,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
+  @if(isset($no_spb))
   $("input[name='no_spb']").val('{{ $no_spb }}'); // fill next spb no
+  @endif
   $("select[name='customer_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='customer_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
 });

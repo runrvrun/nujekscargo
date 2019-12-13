@@ -126,7 +126,6 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:users',
-            'email' => 'required|unique:users',
             'password' => 'required|unique:users',
         ]);
 
@@ -177,7 +176,6 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:users,name,'.$user->id,
-            'email' => 'required|unique:users,email,'.$user->id,
         ]);
         
         $requestData = $request->all();

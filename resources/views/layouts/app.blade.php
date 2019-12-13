@@ -16,8 +16,8 @@
     <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('/') }}app-assets/img/ico/apple-icon-76.png">
     <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('/') }}app-assets/img/ico/apple-icon-120.png">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('/') }}app-assets/img/ico/apple-icon-152.png">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <!-- <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}"> -->
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2">
     <!-- <link rel="shortcut icon" type="image/png" href="app-assets/img/ico/favicon-32.png"> -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
@@ -190,22 +190,13 @@
     <!-- END APEX JS-->
     <!-- BEGIN PAGE LEVEL JS-->
     <script>
-      $(document).ready(function(){
-          var current = location.pathname;
-          if(current!=='/'){
-            $('#main-menu-navigation li a').each(function(){
-                var $this = $(this);
-                if($this.attr('href') !== '{{ url('/') }}'){
-                  if(current.indexOf($this.attr('href').replace('{{ url('/') }}','')) !== -1){
-                    $this.parent('li').parent('ul').parent('li.has-sub').addClass('open');
-                    $this.parent('li').addClass('active');
-                  }
-                }
-            })
-          }else{
-            $('.home-nav').addClass('active');
-          }
-      })
+      var url = String( document.location.href ).replace( "#", "" );         
+      if(url!=='/'){
+        $('a.menu-item[href="'+ url +'"]').parent().addClass('active');
+        $('a.menu-item[href="'+ url +'"]').parents('li.has-sub').addClass('open');
+      }else{
+        $('.home-nav').addClass('active');
+      }
     </script>
     <script>
       $(document).ready(function(){

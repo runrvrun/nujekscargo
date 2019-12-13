@@ -111,7 +111,7 @@ class SpbController extends Controller
         $cols['spb_payment_type_id']['type'] = 'dropdown';
         $cols['spb_payment_type_id']['dropdown_model'] = 'App\Spb_payment_type';
         $cols['spb_payment_type_id']['dropdown_value'] = 'id';
-        $cols['spb_payment_type_id']['dropdown_caption'] = 'type';
+        $cols['spb_payment_type_id']['dropdown_caption'] = 'payment_type';
         $cols['spb_payment_type_id']['B'] = 0;
         $cols['spb_payment_type_id']['R'] = 0;
         $cols['spb_status_id']['caption'] = 'Status';
@@ -172,6 +172,11 @@ class SpbController extends Controller
         ->leftJoin('items','spb_id','spbs.id')
         ->leftJoin('manifests','manifest_id','manifests.id')
         ->groupBy('spbs.id');
+        
+        $userbranch = Branch::find(Auth::user()->branch_id);
+        if($userbranch->type != 'Pusat'){
+            $spb->whereRaw('(spbs.branch_id=11 OR spbs.id IN (SELECT spb_id FROM spb_warehouses WHERE city_id=1671))');
+        }
 
         if($request->filtermanifest == 0){
             $spb->whereNull('manifest_id');
@@ -328,12 +333,23 @@ class SpbController extends Controller
 
     public function searchjson(Request $request)
     {
-        return Spb::selectRaw("no_spb as `value`,CONCAT(customer,' -> ',COALESCE(recipient,''),' (',COALESCE(city,''),', ',COALESCE(province,''),')') AS `desc`")
+        $limit = $request->limit ?? 10;
+        return Spb::selectRaw("no_spb as `value`,CONCAT(COALESCE(CONCAT(no_manifest,' - ')),customer) AS `desc`")
         ->leftJoin('customers','customer_id','customers.id')
+        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
+        ->leftJoin('manifests','manifest_id','manifests.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
-        ->whereRaw('no_spb like \'%'.$request->term.'%\'')
-        ->take(10)->get();
+        ->where(function($query){
+            $query->whereNull('spb_status_id');
+            $query->orWhere('spb_status_id','!=',4);
+        })        
+        ->where(function($query) use ($request){
+            $query->whereRaw('no_spb like \'%'.$request->term.'%\'');
+            $query->orWhereRaw('recipient like \'%'.$request->term.'%\'');
+            $query->orWhereRaw('customers.customer like \'%'.$request->term.'%\'');
+        })        
+        ->take($limit)->get();
     }
 
     public function track($spb_id)

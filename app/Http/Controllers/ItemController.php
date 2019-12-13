@@ -27,6 +27,13 @@ class ItemController extends Controller
                     'B'=>1,'R'=>1,'E'=>1,'A'=>1,'D'=>1
                 ];
             // add joined columns, if any
+            if($val == 'weight'){
+                $cols['total_weight'] = ['column'=>'total_weight','dbcolumn'=>'total_weight',
+                    'caption'=>'&Sigma;Weight',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
             if($val == 'height'){
                 $cols['dimension'] = ['column'=>'dimension','dbcolumn'=>'dimension',
                     'caption'=>'Dimension',
@@ -80,7 +87,8 @@ class ItemController extends Controller
     public function index($spb_id)
     {
         $cols = $this->cols;        
-        $spb = Spb::select('spbs.*','customer')
+        $spb = Spb::select('spbs.*','customer','status_code')
+        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
         ->leftJoin('customers','customer_id','customers.id')
         ->where('spbs.id',$spb_id)->first();
         return view('item.index',compact('cols','spb'));
@@ -89,7 +97,7 @@ class ItemController extends Controller
     public function indexjson($spb_id)
     {
         // return datatables(Item::selectRaw('items.*, CONCAT_WS(\'x\',length,width,height) as dimension, cast(length*width*height/bale as decimal(10,2))/1000 as volume')
-        return datatables(Item::selectRaw('items.*, CONCAT_WS(\'x\',length,width,height) as dimension, cast(length*width*height*bale as decimal(10,3))/1000000 as volume')
+        return datatables(Item::selectRaw('items.*, weight*bale as total_weight, CONCAT_WS(\'x\',length,width,height) as dimension, cast(length*width*height*bale as decimal(10,3))/1000000 as volume')
         ->where('spb_id',$spb_id)
         )->addColumn('action', function ($dt) {
             return view('item.action',compact('dt'));

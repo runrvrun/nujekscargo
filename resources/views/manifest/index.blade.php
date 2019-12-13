@@ -122,12 +122,14 @@ $(document).ready(function() {
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         buttons: [
+            @if(session('privilege')[3]["add"] ?? 0)
             {
               text: '<i class="ft-plus"></i> Add New', className: 'buttons-add',
               action: function ( e, dt, node, config ) {
                   window.location = '{{ url('manifest/create') }}'
               }
             },  
+            @endif
             { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
             {
               extend: 'csv',
