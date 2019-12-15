@@ -155,10 +155,15 @@ class SpbController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cols = $this->cols;        
-        return view('spb.index',compact('cols'));
+        $cols = $this->cols;    
+        if($request->branch_id){
+            $branch = Branch::find($request->branch_id);
+        }else{
+            $branch = null;
+        }    
+        return view('spb.index',compact('cols','branch'));
     }
 
     public function indexjson(Request $request)
@@ -185,6 +190,9 @@ class SpbController extends Controller
         }
         if($request->startdate > '1990-01-01'){
             $spb->whereBetween('spbs.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
+        }
+        if($request->branch_id){
+            $spb->where('spbs.branch_id',$request->branch_id);
         }
 
         return datatables($spb

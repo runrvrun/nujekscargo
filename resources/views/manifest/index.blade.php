@@ -21,7 +21,7 @@
         <div class="card-content">
           <div class="card-body card-dashboard">
             <div class="card-filter row">
-              <div class="col-md-6">
+              <div class="col-md-8">
                 <div class="input-group">
                   <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
                       <i class="fa fa-calendar"></i>&nbsp;
@@ -104,6 +104,9 @@ $(document).ready(function() {
         ajax: {
           url: '{!! url('manifest/indexjson') !!}',
           data : function(d){
+            @if(isset($branch->province_id))
+            d.branch_province_id = {{ $branch->province_id }};
+            @endif
             d.enddate = $('#enddate').val();
             d.startdate = $('#enddate').val();
           }

@@ -40,6 +40,7 @@ Route::group( ['middleware' => 'auth' ], function()
     Route::get('/spb/{a}/track','SpbController@track');
     Route::get('/spb/{a}/report','SpbController@report');
     Route::resource('/spb', 'SpbController');
+    Route::get('/manifest/my','ManifestController@my');
     Route::get('/manifest/{a}/spb/indexjson','ManifestController@spbindexjson');
     Route::get('/manifest/{a}/spb/csvall','ManifestController@spbcsvall');
     Route::post('/manifest/spb/destroy','ManifestController@spbdestroy');

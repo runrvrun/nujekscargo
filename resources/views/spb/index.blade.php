@@ -144,6 +144,9 @@ $(document).ready(function() {
         ajax: {
           url: '{!! url('spb/indexjson') !!}',
           data : function(d){
+            @if(isset($branch->id))
+            d.branch_id = {{ $branch->id }};
+            @endif
             d.filterstatus = $('#filterstatus').val();
             d.enddate = $('#enddate').val();
             d.startdate = $('#enddate').val();

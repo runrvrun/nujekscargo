@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Session;
 use Lang;
 use App\Customer;
+use App\Spb;
+use App\Manifest;
 
 class LoginController extends Controller
 {
@@ -56,6 +58,15 @@ class LoginController extends Controller
                 $privilege[$pri->page_id] = ['browse'=>$pri->browse,'add'=>$pri->add,'edit'=>$pri->edit,'delete'=>$pri->delete];
             }
             session(['privilege'=>$privilege]);
+
+            // if operasional, count undelivered spb
+            if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
+                $manifest = Manifest::where('driver_id',Auth::user()->id)->first();
+                $spb_undelivered = Spb::where('manifest_id',$manifest->id)->where('spb_status_id','!=',4)->count();
+                session(['spb_undelivered'=>$spb_undelivered]);
+                return redirect('/manifest/my');
+            }
+
             return redirect()->intended('/');
         }else{
             // try to authenticate customer

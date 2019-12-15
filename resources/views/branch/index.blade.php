@@ -88,7 +88,7 @@ $(document).ready(function() {
           { data: 'id', name: 'checkbox' },
           @foreach($cols as $val)
           @if($val['B'])
-          { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}' },
+          { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}', className:'{{ $val['column'] }}' },
           @endif
           @endforeach
           { data: 'action', name: 'action' },
@@ -134,12 +134,19 @@ $(document).ready(function() {
             targets: ['id','created_at','updated_at'],
             visible: false,
             searchable: false,
+        },{
+            targets: ['phone','fax','email','email_acc','type'],
+            visible: false,
         } ],
         select: {
             style:    'multi',
             selector: 'td:first-child'
         },
-        order: [[1, 'DESC']]
+        order: [[1, 'DESC']],
+        fnRowCallback : function(row, data) {
+          $('td.code', row).wrapInner('<a title="Manifest" href="{{ url('manifest') }}?branch_id='+data.id+'" />');
+          $('td.branch', row).wrapInner('<a title="SPB" href="{{ url('spb') }}?branch_id='+data.id+'" />');
+        }
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
     $('.buttons-add').addClass('btn mr-1');

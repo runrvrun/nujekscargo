@@ -189,7 +189,6 @@
 $(document).ready(function() {
     $("#spb_status_id").change(function(){
       var sel_status = $("#spb_status_id").val();
-      alert(sel_status);
       if(sel_status == 1){
         $("#branchdriver").show();
       }else{

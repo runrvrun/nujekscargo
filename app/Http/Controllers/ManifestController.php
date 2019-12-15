@@ -108,10 +108,15 @@ class ManifestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $cols = $this->cols;        
-        return view('manifest.index',compact('cols'));
+        if($request->branch_id){
+            $branch = Branch::find($request->branch_id);
+        }else{
+            $branch = null;
+        }
+        return view('manifest.index',compact('cols','branch'));
     }
 
     public function indexjson(Request $request)
@@ -132,13 +137,17 @@ class ManifestController extends Controller
             $manifest->where('origin_province_id',$userbranch->province_id);
         }
         
-        // operasional cabang hanya tampilkan yang dia sebagai driver
-        if(Auth::user()->role_id == 9){
+        // operasional jakarta/cabang hanya tampilkan yang dia sebagai driver
+        if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
             $manifest->where('driver_id',Auth::user()->id);
         }
 
         if($request->startdate > '1990-01-01'){
             $manifest->whereBetween('manifests.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
+        }
+
+        if($request->branch_province_id){
+            $manifest->where('origin_province_id',$request->branch_province_id);
         }
 
         return datatables($manifest
@@ -348,6 +357,10 @@ class ManifestController extends Controller
         if($request->filterstatus >= 0){
             $spb->where('status_code',$request->filterstatus);
         }
+        // operasional jakarta/cabang hanya tampilkan yang bukan RCV TODO(dan bukan WHS+pic)
+        if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
+            $spb->where('spb_status_id','!=',4);
+        }
         
         return datatables($spb
         )->addColumn('action', function ($dt) {
@@ -406,8 +419,23 @@ class ManifestController extends Controller
                 }
             }
         }
+        // if operasional, count undelivered spb
+        if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
+            $manifest = Manifest::where('driver_id',Auth::user()->id)->first();
+            $spb_undelivered = Spb::where('manifest_id',$manifest->id)->where('spb_status_id','!=',4)->count();
+            session(['spb_undelivered'=>$spb_undelivered]);
+        }
         Session::flash('message', 'Status SPB diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('manifest/'.$request->manifest_id.'/spb');
+    }
+
+    public function my(){
+        $manifest = Manifest::where('driver_id',Auth::user()->id)->first();
+        if($manifest){
+            return redirect ('manifest/'.$manifest->id.'/spb');
+        }else{
+            return redirect ('manifest');
+        }
     }
 }
