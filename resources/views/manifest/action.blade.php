@@ -2,7 +2,7 @@
 <!-- <a href="{{ url('manifest/'.$dt->id.'/spb') }}" class="warning p-0" data-original-title="" title="Manifest SPB">
     <i class="ft-map font-medium-3 mr-2"></i> -->
 </a>
-<a href="{{ url('manifest/'.$dt->id.'/report') }}" class="primary p-0" data-original-title="" title="Manifest Report">
+<a href="{{ url('manifest/'.$dt->id.'/report') }}" target="_blank" class="primary p-0" data-original-title="" title="Manifest Report">
     <i class="ft-printer font-medium-3 mr-2"></i>
 </a>
 <!-- <a href="{{ url('manifest/'.$dt->id) }}" class="info p-0" data-original-title="" title="">

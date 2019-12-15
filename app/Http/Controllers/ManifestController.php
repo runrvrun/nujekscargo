@@ -334,14 +334,20 @@ class ManifestController extends Controller
         return view('manifest.spbindex',compact('cols','manifest'));
     }
 
-    public function spbindexjson($manifest_id)
+    public function spbindexjson($manifest_id,Request $request)
     {
-        return datatables(Spb::select('spbs.*','customer','province','city','status_code')
+        $spb = Spb::select('spbs.*','customer','province','city','status_code')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
         ->leftJoin('spb_statuses','spbs.spb_status_id','spb_statuses.id')
-        ->where('manifest_id',$manifest_id)
+        ->where('manifest_id',$manifest_id);
+        
+        if($request->filterstatus >= 0){
+            $spb->where('status_code',$request->filterstatus);
+        }
+        
+        return datatables($spb
         )->addColumn('action', function ($dt) {
             return view('manifest.spbaction',compact('dt'));
         })

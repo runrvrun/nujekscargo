@@ -24,7 +24,19 @@
         <div class="card-header">
         <h5>{{ $manifest->origin }} <i class="ft-arrow-right"></i> {{ $manifest->destination }}</h5>
         </div>
-        <hr/>
+        <div class="card-content">
+          <div class="card-body card-dashboard">
+            <div class="card-filter row">
+              <div class="col-md-5">
+                <button class="btn btn-primary-outline OTW filterstatus" data-status="OTW">OTW</button>
+                <button class="btn btn-primary-outline WHS filterstatus" data-status="WHS">WHS</button>
+                <button class="btn btn-primary-outline DLY filterstatus" data-status="DLY">DLY</button>
+                <button class="btn btn-primary-outline RCV filterstatus" data-status="RCV">RCV</button>
+                {{ Form::hidden('filterstatus',-1,['id'=>'filterstatus'])}}
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="card-content ">
           <div class="card-body card-dashboard table-responsive">
             <table class="table browse-table">
@@ -171,7 +183,12 @@ $(document).ready(function() {
         responsive: resp,
         processing: true,
         serverSide: true,
-        ajax: '{!! url('manifest/'.$manifest->id.'/spb/indexjson') !!}',
+        ajax: {
+          url: '{!! url('manifest/'.$manifest->id.'/spb/indexjson') !!}',
+          data : function(d){
+            d.filterstatus = $('#filterstatus').val();
+          }
+        },
         columns: [
           { data: 'id', name: 'checkbox' },
           @foreach($cols as $val)
@@ -314,6 +331,23 @@ $(document).ready(function() {
       var $date = $('#spb2');
       $date.val($date.val() + nospb + ',');
     });
+
+    $('.filterstatus').click( function() {
+      var clicked = !$(this).hasClass($(this).data("status"));
+      // reset all button
+      $('.filterstatus').each(function(){
+        $(this).addClass($(this).data("status"));
+      });
+      if(!clicked){
+        $(this).toggleClass($(this).data("status"));// turn on/off button
+      }
+      if(!$(this).hasClass($(this).data("status"))){
+        $('#filterstatus').val($(this).data("status"));// clicked, set filter
+      }else{
+        $('#filterstatus').val(-1);// unclicked, unset filter
+      }
+      table.draw();
+    } );
 });
 </script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

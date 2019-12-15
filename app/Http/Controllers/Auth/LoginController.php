@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Session;
 use Lang;
+use App\Customer;
 
 class LoginController extends Controller
 {
@@ -48,6 +49,7 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
+        // authenticate user
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password, 'status' => 1])) {
             $priv = \App\Role_privilege::where('role_id',Auth::user()->role_id)->get();
             foreach($priv as $key=>$pri){
@@ -56,9 +58,16 @@ class LoginController extends Controller
             session(['privilege'=>$privilege]);
             return redirect()->intended('/');
         }else{
-            return redirect('login')->withErrors([
+            // try to authenticate customer
+            $customer = Customer::where('email',$request->username)->where('pic_phone',$request->password)->first();
+            if($customer){
+                session(['customer'=>$customer]);
+                return redirect('/customerspb');
+            }else{
+                return redirect('login')->withErrors([
                 $this->username() => Lang::get('auth.failed'),
-            ]);;
+                ]);;
+            }
         }
     }
 }

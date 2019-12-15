@@ -6,6 +6,8 @@
     "Branch": "Kantor Cabang",
     "City": "Kota",
     "Code": "Kode",
+    "Created At": "Dibuat",
+    "Created By": "Pembuat",
     "Customer": "Pelanggan",
     "Date": "Tanggal",    
     "Destination": "Tujuan",
@@ -26,6 +28,9 @@
     "Recipient": "Penerima",
     "Type": "Jenis",
     "&Sigma;Weight": "&Sigma;Berat",
+    "T.Weight": "T.Berat",
+    "Updated At": "Diubah",
+    "Updated By": "Pengubah",
     "Vehicle": "Armada",
     "Weight": "Berat",
     "Width": "Lebar"

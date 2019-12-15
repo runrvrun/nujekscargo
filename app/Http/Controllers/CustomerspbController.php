@@ -7,14 +7,12 @@ use App\Spb_track;
 use App\Branch;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
-use Auth;
 use DB;
 use PDF;
 use Schema;
 use Session;
-use Validator;
 
-class SpbController extends Controller
+class CustomerspbController extends Controller
 {
     private $cols;
 
@@ -126,10 +124,13 @@ class SpbController extends Controller
         $cols['address']['B'] = 0;
         $cols['address']['type'] = 'textarea';
         $cols['created_at']['type'] = 'datetime';
+        $cols['updated_at']['B'] = 0;
         $cols['updated_at']['type'] = 'datetime';
+        $cols['created_by']['B'] = 0;
         $cols['created_by']['R'] = 0;
         $cols['created_by']['E'] = 0;
         $cols['created_by']['A'] = 0;
+        $cols['updated_by']['B'] = 0;
         $cols['updated_by']['R'] = 0;
         $cols['updated_by']['E'] = 0;
         $cols['updated_by']['A'] = 0;
@@ -156,7 +157,8 @@ class SpbController extends Controller
     public function index()
     {
         $cols = $this->cols;        
-        return view('spb.index',compact('cols'));
+        $customer = session('customer');
+        return view('customerspb.index',compact('cols','customer'));
     }
 
     public function indexjson(Request $request)
@@ -173,10 +175,7 @@ class SpbController extends Controller
         ->leftJoin('manifests','manifest_id','manifests.id')
         ->groupBy('spbs.id');
         
-        $userbranch = Branch::find(Auth::user()->branch_id);
-        if($userbranch->type != 'Pusat'){
-            $spb->whereRaw('(spbs.branch_id=11 OR spbs.id IN (SELECT spb_id FROM spb_warehouses WHERE city_id=1671))');
-        }
+        $spb->where('customer_id',$request->customer_id);
 
         if($request->filterstatus >= 0){
             $spb->where('status_code',$request->filterstatus);
@@ -185,171 +184,7 @@ class SpbController extends Controller
             $spb->whereBetween('spbs.created_at',[$request->startdate.' 00:00:00',$request->enddate.' 23:59:59']);
         }
 
-        return datatables($spb
-        )->addColumn('action', function ($dt) {
-            return view('spb.action',compact('dt'));
-        })
-        ->toJson();
-    }
-
-    public function csvall()
-    {
-        $export = Spb::all();
-        $filename = 'nujeks-spb.csv';
-        $temp = 'temp/'.$filename;
-        (new FastExcel($export))->export('temp/nujeks-spb.csv');
-        $headers = [
-            'Content-Type: text/csv',
-            ];
-        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $no_spb = $this->next_no_spb(Auth::user()->branch_id);
-        $cols = $this->cols;        
-        return view('spb.createupdate',compact('cols','no_spb'));
-    }
-
-    public function next_no_spb($branch_id){
-        $branch = Branch::find($branch_id);
-        $spb = Spb::selectRaw('MAX(SUBSTR(no_spb,6))+1 as next_spb_no')->whereRaw('no_spb LIKE (\'SPB'.$branch->code.'%\')')->first();
-        $next_spb_no = 'SPB'.$branch->code.str_pad($spb->next_spb_no,6,'0',STR_PAD_LEFT);
-        return $next_spb_no;
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'no_spb' => 'required|unique:spbs,no_spb,null,id,deleted_at,NULL',
-            'customer_id' => 'required',
-            'recipient' => 'required',
-            'address' => 'required',
-            'province_id' => 'required',
-            'city_id' => 'required',
-        ]);
-
-        $requestData = $request->all();
-        $requestData['branch_id'] = Auth::user()->branch_id;
-        $requestData['created_by'] = Auth::user()->id;
-        $spb = Spb::create($requestData);
-        Session::flash('message', 'SPB ditambahkan'); 
-        Session::flash('alert-class', 'alert-success'); 
-        return redirect('spb/'.$spb->id.'/item');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Spb  $spb
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Spb $spb)
-    {
-        $cols = $this->cols;        
-        $item = Spb::select('spbs.*','customer','city','province','payment_type')
-        ->leftJoin('customers','customer_id','customers.id')
-        ->leftJoin('cities','spbs.city_id','cities.id')
-        ->leftJoin('provinces','spbs.province_id','provinces.id')
-        ->leftJoin('spb_payment_types','spb_payment_type_id','spb_payment_types.id')
-        ->where('spbs.id',$spb->id)->first();
-        // dd($item);
-        return view('spb.show',compact('cols','item'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Spb  $spb
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Spb $spb)
-    {
-        $cols = $this->cols;        
-        $item = Spb::find($spb->id);
-        return view('spb.createupdate',compact('cols','item'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Spb  $spb
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Spb $spb)
-    {
-        $request->validate([
-            'no_spb' => 'required|unique:spbs,no_spb,'.$spb->id.',id,deleted_at,NULL',
-            'customer_id' => 'required',
-            'recipient' => 'required',
-            'address' => 'required',
-            'province_id' => 'required',
-            'city_id' => 'required',
-        ]);
-
-        $requestData = $request->all();
-        $requestData['updated_by'] = Auth::user()->id;
-        Spb::find($spb->id)->update($requestData);
-        Session::flash('message', 'SPB diubah'); 
-        Session::flash('alert-class', 'alert-success'); 
-        return redirect('spb');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Spb  $spb
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Spb $spb)
-    {
-        Spb::find($spb->id)->update(['updated_by'=>Auth::user()->id]);
-        Spb::destroy($spb->id);
-        Session::flash('message', 'SPB dihapus'); 
-        Session::flash('alert-class', 'alert-success'); 
-        return redirect('spb');
-    }
-    
-    public function destroymulti(Request $request)
-    {
-        $ids = htmlentities($request->id);
-        Spb::whereRaw('id in ('.$ids.')')->delete();
-        Session::flash('message', 'SPB dihapus'); 
-        Session::flash('alert-class', 'alert-success'); 
-        return redirect('spb');
-    }
-
-    public function searchjson(Request $request)
-    {
-        $limit = $request->limit ?? 10;
-        return Spb::selectRaw("no_spb as `value`,CONCAT(COALESCE(CONCAT(no_manifest,' - ')),customer) AS `desc`")
-        ->leftJoin('customers','customer_id','customers.id')
-        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
-        ->leftJoin('manifests','manifest_id','manifests.id')
-        ->leftJoin('cities','spbs.city_id','cities.id')
-        ->leftJoin('provinces','spbs.province_id','provinces.id')
-        ->where(function($query){
-            $query->whereNull('spb_status_id');
-            $query->orWhere('spb_status_id','!=',4);
-        })        
-        ->where(function($query) use ($request){
-            $query->whereRaw('no_spb like \'%'.$request->term.'%\'');
-            $query->orWhereRaw('recipient like \'%'.$request->term.'%\'');
-            $query->orWhereRaw('customers.customer like \'%'.$request->term.'%\'');
-        })        
-        ->take($limit)->get();
+        return datatables($spb)->toJson();
     }
 
     public function track($spb_id)

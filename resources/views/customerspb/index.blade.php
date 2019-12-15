@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.custapp')
 
 @section('pagetitle')
     <title>{{ config('app.name', 'Laravel') }} | SPB</title>
@@ -6,7 +6,7 @@
 
 @section('content')
         <!-- BEGIN : Main Content-->
-        <div class="main-content">
+        <div class="">
           <div class="content-wrapper"><!-- DOM - jQuery events table -->
 <section id="browse-table">
   <div class="row">
@@ -16,7 +16,7 @@
       @endif
       <div class="card">
         <div class="card-header">
-          <h4 class="card-title">SPB</h4>
+          <h4 class="card-title">SPB <strong>{{ $customer->customer }}</strong></h4>
         </div>
         <div class="card-content">
           <div class="card-body card-dashboard">
@@ -53,7 +53,6 @@
                   <th class="{{ $val['column'] }} {{ $val['type'] }}">@lang($val['caption'])</th>
                   @endif
                   @endforeach
-                  <th style="white-space: nowrap;">Action</th>
                 </tr>
               </thead>
             </table>
@@ -94,22 +93,6 @@
 <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>    
 <script>
 $(document).ready(function() {
-
-    // $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );    
-    // $('.browse-table thead tr:eq(0) th').html('');//clear content
-    // $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
-    //     var title = $(this).text();
-    //     $(this).html( '<input type="text" class="form-control" />' );
-    //     $( 'input', this ).on( 'keyup change', function () {
-    //         if ( table.column(i+1).search() !== this.value ) {
-    //             table
-    //                 .column(i+1)
-    //                 .search( this.value )
-    //                 .draw();
-    //         }
-    //     } );
-    // } );
-
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
 
@@ -121,8 +104,9 @@ $(document).ready(function() {
         },
         serverSide: true,
         ajax: {
-          url: '{!! url('spb/indexjson') !!}',
+          url: '{!! url('customerspb/indexjson') !!}',
           data : function(d){
+            d.customer_id = '{{ $customer->id }}';
             d.filterstatus = $('#filterstatus').val();
             d.enddate = $('#enddate').val();
             d.startdate = $('#enddate').val();
@@ -135,33 +119,13 @@ $(document).ready(function() {
           { data: '{{ $val['column'] }}', name: '{{ $val['dbcolumn'] }}', className:'{{ $val['column'] }}' },
           @endif
           @endforeach
-          { data: 'action', name: 'action' },
         ],
         dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
             "<'row'<'col-sm-12'B>>"+
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         buttons: [
-            {
-              text: '<i class="ft-plus"></i> Add New', className: 'buttons-add',
-              action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('spb/create') }}'
-              }
-            },  
             { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
-            {
-              extend: 'csv',
-              text: 'CSV All',
-              className: 'buttons-csvall',
-              action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('spb/csvall') }}'
-              }
-            },
-            {
-              text: '<i class="ft-trash"></i> Hapus', className: 'buttons-deletemulti',
-              action: function ( e, dt, node, config ) {
-              }
-            },  
         ],
         lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
         columnDefs: [ {
@@ -174,17 +138,17 @@ $(document).ready(function() {
                 'selectRow': true
             }
         },{
-            targets: ['id','updated_at','created_by','updated_by'],
+            targets: ['id'],
             visible: false,
             searchable: false,
         },{
-            targets: ['no_po','no_manifest','province','city','pic_contact','pic_phone','type'],
+            targets: ['customer','payment_type','no_manifest','province','city','address','pic_contact','pic_phone','type'],
             visible: false,
         },{
             targets:['datetime'], render:function(data){
               return moment(data).format('DD-MM-YYYY HH:mm');
             }
-        }
+        },
         ],
         select: {
             style:    'multi',
@@ -198,25 +162,6 @@ $(document).ready(function() {
         }
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
-    $('.buttons-add').addClass('btn mr-1');
-    $('.buttons-deletemulti').addClass('btn-danger mr-1');
-
-    $('.buttons-deletemulti').click(function(){
-      var deleteids_arr = [];
-      var rows_selected = table.column(0).checkboxes.selected();
-      $.each(rows_selected, function(index, rowId){
-         deleteids_arr.push(rowId);
-      });
-      var deleteids_str = encodeURIComponent(deleteids_arr);
-
-      // Check any checkbox checked or not
-      if(deleteids_arr.length > 0){
-        var confirmdelete = confirm("Hapus seluruh data terpilih?");
-        if (confirmdelete == true) {
-          window.location = '{{ url('spb/destroymulti?id=') }}'+deleteids_str
-        } 
-      }
-    });
 
     $('#filterdaterange').click( function() {
       daterange = $('#daterange').data('daterangepicker');

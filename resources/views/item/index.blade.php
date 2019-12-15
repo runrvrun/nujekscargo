@@ -21,8 +21,21 @@
         <div class="card-header">
             <h4 class="card-title"><span class="{{ $spb->status_code }}">{{ $spb->status_code }}</span> {{ $spb->no_spb }}</h4>
         </div>
-        <div class="card-header">
-        <h5>{{ $spb->customer }} <i class="ft-arrow-right"></i> {{ $spb->recipient }}</h5>
+        <div class="card-header row col-12">
+          <div class="sender col-5">
+          <p>Pengirim:</p>
+          {{ $spb->customer }}<br>{{ $spb->caddress }}<br>{{ $spb->ccity }}<br>{{ $spb->cprovince }}
+          </div>
+          <div class="col-2"></div>
+          <div class="recipient col-5">
+          <p>Penerima:</p>
+          {{ $spb->recipient }}<br>{{ $spb->address }}<br>{{ $spb->city }}<br>{{ $spb->province }}
+          </div>
+        </div>
+        <div class="card-header row col-12">
+          <div class="payment col-5">Pembayaran: {{ $spb->payment_type }}</div>
+          <div class="col-2"></div>
+          <div class="created col-5">Dibuat oleh: {{ $spb->name }} ({{ $spb->created_at->format("j M Y") }})</div>
         </div>
         <div class="card-content ">
           <div class="card-body card-dashboard table-responsive">
@@ -38,6 +51,21 @@
                   <th style="white-space: nowrap;">Action</th>
                 </tr>
               </thead>
+              <tfoot>
+                <tr>
+                  <th></th>                  
+                  @foreach($cols as $val)
+                  @if($val['B'])
+                  @if($val['column']=='item')
+                  <th>TOTAL</th>
+                  @else
+                  <th></th>
+                  @endif
+                  @endif
+                  @endforeach
+                  <th style="white-space: nowrap;"></th>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
@@ -62,6 +90,14 @@
   .RCV{background-color: #408080;}
   .BTO,.ORD{background-color: #FF586B;}
   .PAI,.CLR{background-color: #008000;}
+
+  .sender, .recipient{
+    min-height: 150px;
+    border: 1px solid #ccc;
+  }
+  .created{
+    text-align: right;
+  }
 </style>
 @endsection
 @section('pagejs')
@@ -73,30 +109,10 @@
 <script src="{{ asset('/') }}/app-assets/vendors/js/datatable/vfs_fonts.js" type="text/javascript"></script>
 <script src="{{ asset('/') }}/app-assets/vendors/js/datatable/buttons.html5.min.js" type="text/javascript"></script>
 <script src="{{ asset('/') }}/app-assets/vendors/js/datatable/buttons.print.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.20/api/sum().js"></script>
 <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>    
 <script>
 $(document).ready(function() {
-
-    // $('.browse-table thead tr').clone(true).appendTo( '.browse-table thead' );    
-    // $('.browse-table thead tr:eq(0) th:first').html('');//clear content
-    // $('.browse-table thead tr:eq(0) th:last').html('');//clear content
-    // $('.browse-table thead tr:eq(0) th').not(':first').not(':last').each( function (i){//skip first and last
-    //     var title = $(this).text();
-    //     if((title == 'Dimensi') || (title == 'Volume')) {// no search box
-    //       $(this).html('');
-    //       return;
-    //     };
-    //     $(this).html( '<input type="text" class="form-control" />' );
-    //     $( 'input', this ).on( 'keyup change', function () {
-    //         if ( table.column(i+1).search() !== this.value ) {
-    //             table
-    //                 .column(i+1)
-    //                 .search( this.value )
-    //                 .draw();
-    //         }
-    //     } );
-    // } );
-
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
 
@@ -161,7 +177,8 @@ $(document).ready(function() {
             checkboxes: {
                 'selectRow': true
             }
-        },{
+        },        
+        {
             targets: ['id','created_at','updated_at','created_by','updated_by'],
             visible: false,
             searchable: false,
@@ -170,7 +187,34 @@ $(document).ready(function() {
             style:    'multi',
             selector: 'td:first-child'
         },
-        order: [[1, 'DESC']]
+        order: [[1, 'DESC']],        
+        footerCallback: function(row, data, start, end, display) {
+          var api = this.api();        
+          api.columns([3,4,5], {
+            page: 'current'
+          }).every(function() {
+            var sum = this
+              .data()
+              .reduce(function(a, b) {
+                var x = parseFloat(a) || 0;
+                var y = parseFloat(b) || 0;
+                return x + y;
+              }, 0);
+            $(this.footer()).html(sum);
+          });
+          api.columns([7], {
+            page: 'current'
+          }).every(function() {
+            var sum = this
+              .data()
+              .reduce(function(a, b) {
+                var x = parseFloat(a) || 0;
+                var y = parseFloat(b) || 0;
+                return x + y;
+              }, 0);
+            $(this.footer()).html(parseFloat(sum).toFixed(3));
+          });
+        },
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
     $('.buttons-add').addClass('btn mr-1');

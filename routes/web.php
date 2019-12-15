@@ -3,6 +3,10 @@
 Auth::routes(['register' => false]);
 Route::post('userlogin','Auth\\LoginController@authenticate')->name('userlogin');
 // Route::get('/hashunhashed','UserController@hashunhashed');
+/** CUSTOMER route*/
+Route::get('customerspb','CustomerspbController@index');
+Route::get('customerspb/indexjson','CustomerspbController@indexjson');
+
 Route::group( ['middleware' => 'auth' ], function()
 {
     Route::get('/', 'HomeController@index');
