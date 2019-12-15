@@ -40,6 +40,17 @@
 @endsection
 @section('pagejs')
 <script>
+  // remove dot (.) after PT / CV
+  $("input[name='customer']").change(function(){
+    ptcv = $(this).val().toUpperCase();
+    ptcv = ptcv.replace('PT. ','PT ');
+    ptcv = ptcv.replace('PT.','PT ');
+    ptcv = ptcv.replace('CV. ','CV ');
+    ptcv = ptcv.replace('CV.','CV ');
+    $(this).val(ptcv);
+  });
+</script>
+<script>
   // make city dropdown conditional to province
   $("select[name='province_id']").change(function () {
     var opt = $("option:selected", this);
