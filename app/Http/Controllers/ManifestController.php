@@ -268,7 +268,8 @@ class ManifestController extends Controller
     
     public function report($manifest_id)
     {
-        $manifest = Manifest::find($manifest_id)->first();
+        $manifest = Manifest::select('manifests.*','name')->where('manifests.id',$manifest_id)
+        ->leftJoin('users','created_by','users.id')->first();
         $spb = Spb::with('items')->select('spbs.*','customer')
         ->leftJoin('customers','customer_id','customers.id')
         ->where('manifest_id',$manifest_id)
