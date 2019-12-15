@@ -13,3 +13,24 @@
     color: #f41313;
     font-weight: normal;
 }
+
+/* hide datatables buttons on mobile */
+@media screen and (max-width: 800px) {
+    .buttons-copy,.buttons-csv,.buttons-excel,.buttons-pdf,.buttons-print{
+        display:none;
+    }
+}
+/* simplify datatables pagination on mobile */
+@media screen and (max-width: 767px) {
+    li.paginate_button.previous {
+        display: inline;
+    }
+ 
+    li.paginate_button.next {
+        display: inline;
+    }
+ 
+    li.paginate_button {
+        display: none;
+    }
+}
