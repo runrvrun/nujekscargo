@@ -327,6 +327,7 @@ class ManifestController extends Controller
         $cols['manifest_id']['B'] = 0;
         $cols['branch_id']['B'] = 0;
         $cols['deleted_at']['B'] = 0;
+        $cols['note']['B'] = 0;
 
         $manifest = Manifest::select('manifests.*','origins.province as origin','destinations.province as destination')
         ->leftJoin('provinces as origins','origin_province_id','origins.id')
@@ -389,6 +390,9 @@ class ManifestController extends Controller
             if(!empty($request->city_id)){
                 Spb_warehouse::create(['spb_id'=>$request->sel_spb_id,'city_id'=>$request->city_id,'user_id'=>$request->user_id]);
             }
+            if(!empty($request->spb_status_note)){
+                Spb::find($request->sel_spb_id)->update(['note'=>$request->spb_status_note]);
+            }
         }elseif(!empty($request->sel_spb_ids)){
             $sel_spb_ids = explode('%2C',$request->sel_spb_ids);
             foreach($sel_spb_ids as $key=>$val){
@@ -396,6 +400,9 @@ class ManifestController extends Controller
                 Spb_track::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
                 if(!empty($request->city_id)){
                     Spb_warehouse::create(['spb_id'=>$val,'city_id'=>$request->city_id,'user_id'=>$request->user_id]);
+                }
+                if(!empty($request->spb_status_note)){
+                    Spb::find($val)->update(['note'=>$request->spb_status_note]);
                 }
             }
         }

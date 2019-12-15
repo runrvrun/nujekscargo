@@ -145,6 +145,8 @@ class SpbController extends Controller
         $cols['branch_id']['R'] = 0;
         $cols['branch_id']['E'] = 0;
         $cols['branch_id']['A'] = 0;
+        $cols['note']['B'] = 0;
+        $cols['note']['type'] = 'textarea';
 
         $this->cols = $cols;
     }

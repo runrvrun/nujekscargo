@@ -16,7 +16,16 @@
 </a>
 {{ csrf_field() }}
 {{ method_field('DELETE') }}
-    <a class="danger p-0" onclick="if(confirm('Hapus data ini?')) this.closest('form').submit()" title="Hapus">
+<a class="danger p-0" onclick="if(confirm('Hapus data ini?')) this.closest('form').submit()" title="Hapus">
         <i class="ft-x font-medium-3 mr-2"></i>
     </a>
+@if(!empty($dt->note))
+<a title="Catatan" class="warning p-0 show-spb-note-modal" data-note="{{ $dt->note }}"><i class="ft-file-text font-medium-3"></i></a>
+@endif
 </form>
+<script> 
+    $(".show-spb-note-modal").click(function(){
+      $("#spb-note-modal-note").html($(this).data("note"));
+      $("#spb-note-modal").modal('show');
+    });
+</script>

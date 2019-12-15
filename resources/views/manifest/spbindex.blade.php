@@ -125,10 +125,30 @@
           @lang('City'): {{ Form::select('city_id',\App\City::pluck('city','id'),null,['class'=>'form-control','id'=>'city_id','placeholder'=>' ']) }}
           @lang('PIC'): {{ Form::select('user_id',\App\User::pluck('name','id'),null,['class'=>'form-control','id'=>'user_id','placeholder'=>' ']) }}
           </div>
+          Catatan: {{ Form::textarea('spb_status_note',null,['class'=>'form-control','id'=>'spb_status_note','rows'=>3]) }}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Batal</button>
         <button type="submit" class="btn btn-primary"><i class="ft-save"></i> Simpan</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>   
+<!-- Modal -->
+<div class="modal fade text-left" id="spb-note-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel1">Catatan</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="spb-note-modal-note">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Tutup</button>
       </div>
       </form>
     </div>
@@ -169,6 +189,7 @@
 $(document).ready(function() {
     $("#spb_status_id").change(function(){
       var sel_status = $("#spb_status_id").val();
+      alert(sel_status);
       if(sel_status == 1){
         $("#branchdriver").show();
       }else{
@@ -351,59 +372,6 @@ $(document).ready(function() {
 });
 </script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script>
-    $( function() {
-    function split( val ) {
-        return val.split( /,\s*/ );
-    }
-    function extractLast( term ) {
-        return split( term ).pop();
-    }
-
-    $( "#spb" )
-        // don't navigate away from the field on tab when selecting an item
-        .on( "keydown", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
-            $( this ).autocomplete( "instance" ).menu.active ) {
-            event.preventDefault();
-        }
-        })
-        .autocomplete({
-        source: function( request, response ) {
-            $.getJSON( "{{ url('/spb/searchjson') }}", {
-            term: extractLast( request.term )
-            }, response );
-        },
-        search: function() {
-            // custom minLength
-            var term = extractLast( this.value );
-            if ( term.length < 3 ) {
-            return false;
-            }
-        },
-        focus: function() {
-            // prevent value inserted on focus
-            return false;
-        },
-        select: function( event, ui ) {
-            var terms = split( this.value );
-            // remove the current input
-            terms.pop();
-            // add the selected item
-            terms.push( ui.item.value );
-            // add placeholder to get the comma-and-space at the end
-            terms.push( "" );
-            this.value = terms.join( ", " );
-            return false;
-        }
-        })
-        .autocomplete( "instance" )._renderItem = function( ul, item ) {
-        return $( "<li>" )
-            .append( "<div>" + item.value + "<br>" + item.desc + "</div>" )
-            .appendTo( ul );
-        };
-    });
-</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
