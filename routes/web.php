@@ -6,6 +6,9 @@ Route::post('userlogin','Auth\\LoginController@authenticate')->name('userlogin')
 /** CUSTOMER route*/
 Route::get('customerspb','CustomerspbController@index');
 Route::get('customerspb/indexjson','CustomerspbController@indexjson');
+Route::get('customerspb/{a}/track','CustomerspbController@track');
+Route::get('customerspb/{a}/item','CustomeritemController@index');
+Route::get('customerspb/{a}/itemjson','CustomeritemController@indexjson');
 
 Route::group( ['middleware' => 'auth' ], function()
 {

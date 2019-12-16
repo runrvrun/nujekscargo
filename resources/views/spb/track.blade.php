@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | @lang('Item')</title>
+    <title>@lang('SPB Tracking')</title>
 @endsection
 
 @section('content')
@@ -38,7 +38,7 @@
                       {{ $val->status_code }}
                     </div>
                     <div class="tracking-date">{{ $val->created_at->format('d M Y') }}<span>{{ $val->created_at->format('H:i') }}</span></div>
-                    <div class="tracking-content">{{ $val->track }}<span>{{ $val->status }}</span></div>
+                    <div class="tracking-content">{{ $val->process }} {{ $val->city }} <div>{{ $val->track }}</div><span>{{ $val->status }}</span></div>
                 </div>
                 @endforeach
               </div>

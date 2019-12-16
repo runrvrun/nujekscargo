@@ -1,7 +1,7 @@
 @extends('layouts.custapp')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | SPB</title>
+    <title>SPB</title>
 @endsection
 
 @section('content')
@@ -157,8 +157,8 @@ $(document).ready(function() {
         order: [[1, 'DESC']],
         fnRowCallback : function(row, data) {
           $('td.status_code', row).addClass(data['status_code']);
-          $('td.status_code', row).wrapInner('<a title="Tracking" href="{{ url('spb') }}/'+ data['id'] +'/track" />');
-          $('td.no_spb', row).wrapInner('<a title="Daftar Barang" href="{{ url('spb') }}/'+ data['id'] +'/item" />');
+          $('td.status_code', row).wrapInner('<a title="Tracking" href="{{ url('customerspb') }}/'+ data['id'] +'/track" />');
+          $('td.no_spb', row).wrapInner('<a title="Daftar Barang" href="{{ url('customerspb') }}/'+ data['id'] +'/item" />');
         }
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');

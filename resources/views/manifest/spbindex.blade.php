@@ -120,10 +120,18 @@
           {{ Form::hidden('sel_spb_id',null,['id'=>'sel_spb_id']) }}
           {{ Form::hidden('sel_spb_ids',null,['id'=>'sel_spb_ids']) }}
           Status: {{ Form::select('spb_status_id',\App\Spb_status::pluck('status','id'),null,['class'=>'form-control','id'=>'spb_status_id']) }}
+          <div class="row" style="margin-top:3px;">
+            <div class="col-6">
+              {{ Form::select('process',['Posisi barang di'=>'Posisi barang di','Proses bongkar di'=>'Proses bongkar di'],null,['class'=>'form-control','id'=>'process']) }}
+            </div>
+            <div class="col-6">
+              {{ Form::select('city_id',\App\City::pluck('city','id'),null,['class'=>'form-control','id'=>'city_id']) }}
+            </div>
+          </div>
           Keterangan: {{ Form::textarea('track',null,['class'=>'form-control','rows'=>3]) }}
           <div id="branchdriver" style="display:none">
-          @lang('City'): {{ Form::select('city_id',\App\City::pluck('city','id'),null,['class'=>'form-control','id'=>'city_id','placeholder'=>' ']) }}
-          @lang('PIC'): {{ Form::select('user_id',\App\User::pluck('name','id'),null,['class'=>'form-control','id'=>'user_id','placeholder'=>' ']) }}
+          @lang('Warehouse'): {{ Form::select('warehouse_city_id',\App\City::pluck('city','id'),null,['class'=>'form-control','id'=>'warehouse_city_id','placeholder'=>' ']) }}
+          @lang('Warehouse PIC'): {{ Form::select('user_id',\App\User::pluck('name','id'),null,['class'=>'form-control','id'=>'user_id','placeholder'=>' ']) }}
           </div>
           Catatan: {{ Form::textarea('spb_status_note',null,['class'=>'form-control','id'=>'spb_status_note','rows'=>3]) }}
       </div>
@@ -380,6 +388,9 @@ $(document).ready(function(){
   $("select[name='city_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='city_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='city_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='warehouse_city_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='warehouse_city_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='warehouse_city_id']").attr('data-size','4'); // dropdown search with bootstrap select
 });
 </script>
 @endsection

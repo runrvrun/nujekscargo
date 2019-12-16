@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | @lang('Item')</title>
+    <title>@lang('SPB Tracking')</title>
 @endsection
 
 @section('content')

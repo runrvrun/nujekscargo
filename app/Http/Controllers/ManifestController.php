@@ -399,9 +399,9 @@ class ManifestController extends Controller
     {
         if(!empty($request->sel_spb_id)){
             Spb::find($request->sel_spb_id)->update(['spb_status_id'=>$request->spb_status_id]);
-            Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
-            if(!empty($request->city_id)){
-                Spb_warehouse::create(['spb_id'=>$request->sel_spb_id,'city_id'=>$request->city_id,'user_id'=>$request->user_id]);
+            Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
+            if(!empty($request->warehouse_city_id)){
+                Spb_warehouse::create(['spb_id'=>$request->sel_spb_id,'city_id'=>$request->warehouse_city_id,'user_id'=>$request->user_id]);
             }
             if(!empty($request->spb_status_note)){
                 Spb::find($request->sel_spb_id)->update(['note'=>$request->spb_status_note]);
@@ -410,9 +410,9 @@ class ManifestController extends Controller
             $sel_spb_ids = explode('%2C',$request->sel_spb_ids);
             foreach($sel_spb_ids as $key=>$val){
                 Spb::find($val)->update(['spb_status_id'=>$request->spb_status_id]);
-                Spb_track::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
-                if(!empty($request->city_id)){
-                    Spb_warehouse::create(['spb_id'=>$val,'city_id'=>$request->city_id,'user_id'=>$request->user_id]);
+                Spb_track::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
+                if(!empty($request->warehouse_city_id)){
+                    Spb_warehouse::create(['spb_id'=>$val,'city_id'=>$request->warehouse_city_id,'user_id'=>$request->user_id]);
                 }
                 if(!empty($request->spb_status_note)){
                     Spb::find($val)->update(['note'=>$request->spb_status_note]);

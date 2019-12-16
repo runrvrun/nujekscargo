@@ -369,9 +369,10 @@ class SpbController extends Controller
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
         ->where('spbs.id',$spb_id)->first();
-        $track = Spb_track::select('spb_tracks.*','status_code','status')
+        $track = Spb_track::select('spb_tracks.*','status_code','status','city')
         ->where('spb_id',$spb_id)
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
+        ->leftJoin('cities','city_id','cities.id')
         ->orderBy('created_at','DESC')->get();
         return view('spb.track',compact('cols','spb','track'));
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Spb;
 use App\Spb_track;
+use App\Item;
 use App\Branch;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
