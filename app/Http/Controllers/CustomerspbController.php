@@ -6,12 +6,14 @@ use App\Spb;
 use App\Spb_track;
 use App\Item;
 use App\Branch;
+use App\User;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use DB;
 use PDF;
 use Schema;
 use Session;
+use Carbon\Carbon;
 
 class CustomerspbController extends Controller
 {
@@ -199,12 +201,11 @@ class CustomerspbController extends Controller
         ->where('spb_id',$spb_id)
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
         ->orderBy('created_at','DESC')->get();
-        return view('spb.track',compact('cols','spb','track'));
+        return view('customerspb.track',compact('cols','spb','track'));
     }
     
     public function report($spb_id)
     {
-        $userbranch = Branch::find(Auth::user()->branch_id);
         $spb = Spb::with('items')->select('spbs.*','customer','customers.address as cust_address',
         'branch','payment_type','name')
         ->leftJoin('customers','customer_id','customers.id')
@@ -213,7 +214,25 @@ class CustomerspbController extends Controller
         ->leftJoin('users','spbs.created_by','users.id')
         ->where('spbs.id',$spb_id)
         ->first();
-        $pdf = PDF::loadview('spb.report',compact('spb','userbranch'),[],['title' => 'Nujeks - SPB_'.$spb->no_spb.'.pdf']);        
+        $user = User::find($spb->created_by);
+        $userbranch = Branch::find($user->branch_id);
+        $pdf = PDF::loadview('customerspb.report',compact('spb','userbranch'),[],['title' => 'Nujeks - SPB_'.$spb->no_spb.'.pdf']);        
+    	return $pdf->stream();
+    }
+
+    public function reporttrack($spb_id)
+    {
+        $spb = Spb::select('spbs.*','customer','status_code','status')
+        ->leftJoin('customers','customer_id','customers.id')
+        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
+        ->where('spbs.id',$spb_id)->first();
+        $track = Spb_track::select('spb_tracks.*','status_code','status')
+        ->where('spb_id',$spb_id)
+        ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
+        ->orderBy('created_at','DESC')->get();
+        $user = User::find($spb->created_by);
+        $userbranch = Branch::find($user->branch_id);
+        $pdf = PDF::loadview('customerspb.reporttrack',compact('spb','userbranch','track'),[],['title' => 'Nujeks - SPB Tracking_'.$spb->no_spb.'.pdf']);        
     	return $pdf->stream();
     }
 }

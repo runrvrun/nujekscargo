@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Spb;
 use App\Spb_track;
 use App\Branch;
+use App\User;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Auth;
@@ -379,7 +380,6 @@ class SpbController extends Controller
     
     public function report($spb_id)
     {
-        $userbranch = Branch::find(Auth::user()->branch_id);
         $spb = Spb::with('items')->select('spbs.*','customer','customers.address as cust_address',
         'branch','payment_type','name')
         ->leftJoin('customers','customer_id','customers.id')
@@ -388,6 +388,8 @@ class SpbController extends Controller
         ->leftJoin('users','spbs.created_by','users.id')
         ->where('spbs.id',$spb_id)
         ->first();
+        $user = User::find($spb->created_by);
+        $userbranch = Branch::find($user->branch_id);
         $pdf = PDF::loadview('spb.report',compact('spb','userbranch'),[],['title' => 'Nujeks - SPB_'.$spb->no_spb.'.pdf']);        
     	return $pdf->stream();
     }

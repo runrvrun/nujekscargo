@@ -16,7 +16,7 @@
       @endif
       <div class="card">
         <div style="position:absolute">
-          <a href="{{ url('spb') }}" class="btn btn-primary pull-left"><i class="ft-arrow-left"></i> Kembali ke SPB</a>
+          <a href="{{ url('customerspb') }}" class="btn btn-primary pull-left"><i class="ft-arrow-left"></i> Kembali ke SPB</a>
         </div>
         <div class="card-header">
             <h4 class="card-title"><span class="{{ $spb->status_code }}">{{ $spb->status_code }}</span> {{ $spb->no_spb }}</h4>
@@ -136,12 +136,6 @@ $(document).ready(function() {
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         buttons: [
-            {
-              text: '<i class="ft-plus"></i> Add New', className: 'buttons-add',
-              action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('spb/'.$spb->id.'/item/create') }}'
-              }
-            },  
             { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
             {
               extend: 'csv',
@@ -152,15 +146,9 @@ $(document).ready(function() {
               }
             },
             {
-              text: '<i class="ft-trash"></i> Delete', className: 'buttons-deletemulti',
-              action: function ( e, dt, node, config ) {
-
-              }
-            },  
-            {
               text: '<i class="ft-printer"></i> Cetak SPB', className: 'buttons-cetakspb',              
               action: function ( e, dt, button, config ) {
-                window.open('{{ url('spb/'.$spb->id.'/report') }}');
+                window.open('{{ url('customerspb/'.$spb->id.'/report') }}');
               }
             }, 
         ],

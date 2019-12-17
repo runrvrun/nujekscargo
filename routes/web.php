@@ -7,6 +7,8 @@ Route::post('userlogin','Auth\\LoginController@authenticate')->name('userlogin')
 Route::get('customerspb','CustomerspbController@index');
 Route::get('customerspb/indexjson','CustomerspbController@indexjson');
 Route::get('customerspb/{a}/track','CustomerspbController@track');
+Route::get('customerspb/{a}/reporttrack','CustomerspbController@reporttrack');
+Route::get('customerspb/{a}/report','CustomerspbController@report');
 Route::get('customerspb/{a}/item','CustomeritemController@index');
 Route::get('customerspb/{a}/itemjson','CustomeritemController@indexjson');
 

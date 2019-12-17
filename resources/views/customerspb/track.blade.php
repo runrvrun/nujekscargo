@@ -16,7 +16,10 @@
       @endif
       <div class="card">
         <div style="position:absolute">
-          <a href="{{ url('spb') }}" class="btn btn-primary pull-left"><i class="ft-arrow-left"></i> Kembali ke SPB</a>
+          <a href="{{ url('customerspb') }}" class="btn btn-primary pull-left"><i class="ft-arrow-left"></i> Kembali ke SPB</a>
+        </div>
+        <div>
+          <a href="{{ url('customerspb/'.$spb->id.'/reporttrack') }}" class="btn btn-info pull-right"><i class="ft-printer"></i> Cetak Tracking</a>
         </div>
         <div class="card-header">
             <h4 class="card-title">{{ $spb->no_spb }}</h4>
@@ -38,7 +41,7 @@
                       {{ $val->status_code }}
                     </div>
                     <div class="tracking-date">{{ $val->created_at->format('d M Y') }}<span>{{ $val->created_at->format('H:i') }}</span></div>
-                    <div class="tracking-content">{{ $val->track }}<span>{{ $val->status }}</span></div>
+                    <div class="tracking-content">{{ $val->process }} {{ $val->city }} <div>{{ $val->track }}</div><span>{{ $val->status }}</span></div>
                 </div>
                 @endforeach
               </div>
