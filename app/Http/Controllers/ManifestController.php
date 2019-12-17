@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Manifest;
 use App\Spb;
+use App\Manifest_spb;
 use App\Spb_track;
 use App\Spb_warehouse;
 use App\Item;
@@ -11,6 +12,7 @@ use App\Branch;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Auth;
+use DB;
 use PDF;
 use Schema;
 use Session;
@@ -61,6 +63,11 @@ class ManifestController extends Controller
                 ];
             }
         } 
+        $cols['count_spb'] = ['column'=>'count_spb','dbcolumn'=>'count_spb',
+            'caption'=>'Jumlah SPB',
+            'type' => 'text',
+            'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+        ];
         // modify defaults
         $cols['origin_province_id']['caption'] = 'Origin';
         $cols['origin_province_id']['type'] = 'dropdown';
@@ -128,10 +135,13 @@ class ManifestController extends Controller
         */
         $userbranch = Branch::find(Auth::user()->branch_id);
         $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination','users.name as driver','no_plate')
+        ->addSelect(DB::raw('count(DISTINCT spb_id) as count_spb'))
         ->leftJoin('provinces as ori','origin_province_id','ori.id')
         ->leftJoin('provinces as des','destination_province_id','des.id')
         ->leftJoin('users','driver_id','users.id')
-        ->leftJoin('vehicles','vehicle_id','vehicles.id');
+        ->leftJoin('vehicles','vehicle_id','vehicles.id')
+        ->leftJoin('manifest_spbs','manifest_spbs.manifest_id','manifests.id')
+        ->groupBy('manifests.id');
         
         if($userbranch->type != 'Pusat'){
             $manifest->where('origin_province_id',$userbranch->province_id);
@@ -281,6 +291,7 @@ class ManifestController extends Controller
         ->leftJoin('users','created_by','users.id')->first();
         $spb = Spb::with('items')->select('spbs.*','customer')
         ->leftJoin('customers','customer_id','customers.id')
+        ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
         ->where('manifest_id',$manifest_id)
         ->get();
         // return view('manifest.report',compact('manifest','spb'));
@@ -297,6 +308,7 @@ class ManifestController extends Controller
         length*width*height*bale/1000 as volume,packaging,no_po")
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('items','spb_id','spbs.id')
+        ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
         ->where('manifest_id',$manifest_id)
         ->get();
         return (new FastExcel($manifest))->download('Nujeks_manifest_'.$man->no_manifest.'.csv');
@@ -361,11 +373,12 @@ class ManifestController extends Controller
 
     public function spbindexjson($manifest_id,Request $request)
     {
-        $spb = Spb::select('spbs.*','customer','province','city','status_code')
+        $spb = Spb::select('spbs.*','manifest_id','customer','province','city','status_code')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
         ->leftJoin('spb_statuses','spbs.spb_status_id','spb_statuses.id')
+        ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
         ->where('manifest_id',$manifest_id);
         
         if($request->filterstatus >= 0){
@@ -385,7 +398,8 @@ class ManifestController extends Controller
 
     public function spbdestroy(Request $request)
     {
-        Spb::find($request->spb_id)->update(['manifest_id'=>null]);
+        $manifest_spb = Manifest_spb::where('manifest_id',$request->manifest_id)->where('spb_id',$request->spb_id)->first();
+        Manifest_spb::destroy($manifest_spb->id);
         Session::flash('message', 'SPB dihapus dari Manifest'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('manifest/'.$request->manifest_id.'/spb');
@@ -394,8 +408,12 @@ class ManifestController extends Controller
     public function spbdestroymulti(Request $request)
     {
         $ids = htmlentities($request->id);
-        Spb::whereRaw('id in ('.$ids.')')->update(['manifest_id'=>null]);
-        Session::flash('message', 'Manifest dihapus dari Manifest'); 
+        $id = explode(',',$ids);
+        foreach($id as $val){
+            $manifest_spb = Manifest_spb::where('manifest_id',$request->manifest_id)->where('spb_id',$val)->first();
+            Manifest_spb::destroy($manifest_spb->id);
+        }
+        Session::flash('message', 'SPB dihapus dari Manifest'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('manifest/'.$request->manifest_id.'/spb');
     }
@@ -403,7 +421,10 @@ class ManifestController extends Controller
     public function setmanifestmulti(Request $request){
         $spb_add = str_replace(' ','',$request->spb_add);        
         $spb_add = preg_split('@,@', $spb_add, NULL, PREG_SPLIT_NO_EMPTY);
-        Spb::whereIn('no_spb', $spb_add)->update(['manifest_id'=>$request->manifest_id]);
+        foreach($spb_add as $val){
+            $spb = Spb::where('no_spb',$val)->first();
+            Manifest_spb::create(['manifest_id'=>$request->manifest_id,'spb_id'=>$spb->id]);
+        }
         Session::flash('message', 'SPB ditambahkan ke Manifest'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('manifest/'.$request->manifest_id.'/spb');

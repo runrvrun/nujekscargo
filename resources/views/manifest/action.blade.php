@@ -5,9 +5,11 @@
 <a href="{{ url('manifest/'.$dt->id.'/report') }}" target="_blank" class="primary p-0" data-original-title="" title="Manifest Report">
     <i class="ft-printer font-medium-3 mr-2"></i>
 </a>
+@if($dt->count_spb)
 <a href="{{ url('manifest/'.$dt->id.'/excel') }}" class="primary p-0" data-original-title="" title="Export Excel">
     <i class="ft-layout font-medium-3 mr-2"></i>
 </a>
+@endif
 <!-- <a href="{{ url('manifest/'.$dt->id) }}" class="info p-0" data-original-title="" title="">
         <i class="ft-zoom-in font-medium-3 mr-2"></i> -->
     </a>

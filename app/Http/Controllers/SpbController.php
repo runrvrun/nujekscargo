@@ -66,13 +66,11 @@ class SpbController extends Controller
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
-            if($val == 'manifest_id'){
-                $cols['no_manifest'] = ['column'=>'no_manifest','dbcolumn'=>'manifests.no_manifest',
-                    'caption'=>'Manifest',
-                    'type' => 'text', 
-                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
-                ];
-            }
+            $cols['no_manifest'] = ['column'=>'no_manifest','dbcolumn'=>'manifests.no_manifest',
+                'caption'=>'Manifest',
+                'type' => 'text', 
+                'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+            ];
             $cols['no_po'] = ['column'=>'no_po','dbcolumn'=>'items.no_po',
                     'caption'=>'No PO',
                     'type' => 'text', 
@@ -138,10 +136,6 @@ class SpbController extends Controller
         $cols['deleted_at']['R'] = 0;
         $cols['deleted_at']['E'] = 0;
         $cols['deleted_at']['A'] = 0;
-        $cols['manifest_id']['B'] = 0;
-        $cols['manifest_id']['R'] = 0;
-        $cols['manifest_id']['E'] = 0;
-        $cols['manifest_id']['A'] = 0;
         $cols['branch_id']['B'] = 0;
         $cols['branch_id']['R'] = 0;
         $cols['branch_id']['E'] = 0;
@@ -170,15 +164,17 @@ class SpbController extends Controller
     public function indexjson(Request $request)
     {
         // dd($request->all());
-        $spb = Spb::select('spbs.*','customer','city','province','payment_type','status_code','status','no_manifest')
-        ->addSelect(DB::raw('GROUP_CONCAT(no_po ORDER BY no_po ASC SEPARATOR \', \') as no_po'))
+        $spb = Spb::select('spbs.*','customer','city','province','payment_type','status_code','status')
+        ->addSelect(DB::raw('GROUP_CONCAT(DISTINCT no_manifest ORDER BY no_manifest ASC SEPARATOR \', \') as no_manifest'))
+        ->addSelect(DB::raw('GROUP_CONCAT(DISTINCT no_po ORDER BY no_po ASC SEPARATOR \', \') as no_po'))
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
         ->leftJoin('spb_payment_types','spb_payment_type_id','spb_payment_types.id')
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
-        ->leftJoin('items','spb_id','spbs.id')
-        ->leftJoin('manifests','manifest_id','manifests.id')
+        ->leftJoin('items','items.spb_id','spbs.id')
+        ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+        ->leftJoin('manifests','manifests.id','manifest_spbs.manifest_id')
         ->groupBy('spbs.id');
         
         $userbranch = Branch::find(Auth::user()->branch_id);
@@ -345,10 +341,11 @@ class SpbController extends Controller
     public function searchjson(Request $request)
     {
         $limit = $request->limit ?? 10;
-        return Spb::selectRaw("no_spb as `value`,CONCAT(COALESCE(CONCAT(no_manifest,' - ')),customer) AS `desc`")
+        return Spb::selectRaw("no_spb as `value`,CONCAT(COALESCE(CONCAT(GROUP_CONCAT(DISTINCT no_manifest ORDER BY no_manifest ASC SEPARATOR ', '),' - ')),customer) AS `desc`")
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
-        ->leftJoin('manifests','manifest_id','manifests.id')
+        ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+        ->leftJoin('manifests','manifests.id','manifest_spbs.manifest_id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
         ->where(function($query){
@@ -360,6 +357,7 @@ class SpbController extends Controller
             $query->orWhereRaw('recipient like \'%'.$request->term.'%\'');
             $query->orWhereRaw('customers.customer like \'%'.$request->term.'%\'');
         })        
+        ->groupBy('spbs.id')
         ->take($limit)->get();
     }
 

@@ -305,7 +305,7 @@ $(document).ready(function() {
 
       // Check any checkbox checked or not
       if(deleteids_arr.length > 0){
-        var confirmdelete = confirm("Hapus seluruh data terpilih?");
+        var confirmdelete = confirm("Keluarkan semua SPB terpilih?");
         if (confirmdelete == true) {
           window.location = '{!! url('manifest/spb/destroymulti?manifest_id='.$manifest->id.'&id=') !!}'+deleteids_str
         } 
