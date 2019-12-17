@@ -101,7 +101,7 @@
                                     <td style="text-align:right">{{ $vali->weight*$vali->bale }}</td>
                                     <td style="text-align:right">{{ $vali->length.'x'.$vali->width.'x'.$vali->height }}</td>
                                     <td style="text-align:right">{{ number_format(($vali->length*$vali->width*$vali->height*$vali->bale/1000),3,',','.') }}</td>
-                                    <td><{{ $vali->packaging }}/td>
+                                    <td>{{ $vali->packaging }}</td>
                                     <td>{{ $vali->no_po }}</td>
                                 </tr>
                                 @endforeach

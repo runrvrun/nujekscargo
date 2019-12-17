@@ -192,11 +192,12 @@ class CustomerspbController extends Controller
 
     public function track($spb_id)
     {
+        $customer = session('customer');
         $cols = $this->cols;        
         $spb = Spb::select('spbs.*','customer','status_code','status')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
-        ->where('spbs.id',$spb_id)->first();
+        ->where('spbs.id',$spb_id)->where('customer_id',$customer->id)->first();
         $track = Spb_track::select('spb_tracks.*','status_code','status')
         ->where('spb_id',$spb_id)
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
@@ -206,13 +207,14 @@ class CustomerspbController extends Controller
     
     public function report($spb_id)
     {
+        $customer = session('customer');
         $spb = Spb::with('items')->select('spbs.*','customer','customers.address as cust_address',
         'branch','payment_type','name')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('branches','spbs.branch_id','branches.id')
         ->leftJoin('spb_payment_types','spb_payment_type_id','spb_payment_types.id')
         ->leftJoin('users','spbs.created_by','users.id')
-        ->where('spbs.id',$spb_id)
+        ->where('spbs.id',$spb_id)->where('customer_id',$customer->id)
         ->first();
         $user = User::find($spb->created_by);
         $userbranch = Branch::find($user->branch_id);
@@ -222,10 +224,11 @@ class CustomerspbController extends Controller
 
     public function reporttrack($spb_id)
     {
+        $customer = session('customer');
         $spb = Spb::select('spbs.*','customer','status_code','status')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
-        ->where('spbs.id',$spb_id)->first();
+        ->where('spbs.id',$spb_id)->where('customer_id',$customer->id)->first();
         $track = Spb_track::select('spb_tracks.*','status_code','status')
         ->where('spb_id',$spb_id)
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')

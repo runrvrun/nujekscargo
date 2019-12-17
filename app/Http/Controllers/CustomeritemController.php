@@ -86,6 +86,7 @@ class CustomeritemController extends Controller
      */
     public function index($spb_id)
     {
+        $customer = session('customer');
         $cols = $this->cols;        
         $spb = Spb::select('spbs.*','customer', 'customers.address as caddress', 'status_code',
         'cities.city as city','provinces.province as province', 'cc.city as ccity',
@@ -98,7 +99,7 @@ class CustomeritemController extends Controller
         ->leftJoin('provinces as cp','customers.province_id','cp.id')
         ->leftJoin('spb_payment_types','spbs.spb_payment_type_id','spb_payment_types.id')
         ->leftJoin('users','spbs.created_by','users.id')
-        ->where('spbs.id',$spb_id)->first();
+        ->where('spbs.id',$spb_id)->where('customer_id',$customer->id)->first();
         return view('customerspb.item',compact('cols','spb'));
     }
 

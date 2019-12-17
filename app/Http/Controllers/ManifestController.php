@@ -287,6 +287,20 @@ class ManifestController extends Controller
         $pdf = PDF::loadview('manifest.report',compact('manifest','spb'),[],['title' => 'Nujeks - Manifest_'.$manifest->no_manifest.'.pdf']);
     	return $pdf->stream();
     }
+    
+    public function excel($manifest_id)
+    {
+        $man = Manifest::find($manifest_id);
+        $manifest = Spb::selectRaw("no_spb,customer as pengirim,recipient as penerima,item as barang,
+        bale as koli,weight as berat, bale*weight as total_berat,
+        CONCAT(length,'x',width,'x',height) as dimensi,
+        length*width*height*bale/1000 as volume,packaging,no_po")
+        ->leftJoin('customers','customer_id','customers.id')
+        ->leftJoin('items','spb_id','spbs.id')
+        ->where('manifest_id',$manifest_id)
+        ->get();
+        return (new FastExcel($manifest))->download('Nujeks_manifest_'.$man->no_manifest.'.csv');
+    }
 
     public function spbindex($manifest_id)
     {

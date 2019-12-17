@@ -54,6 +54,7 @@ Route::group( ['middleware' => 'auth' ], function()
     Route::post('/manifest/spb/updatestatus','ManifestController@spbupdatestatus');    
     Route::get('/manifest/{a}/spb','ManifestController@spbindex');
     Route::get('/manifest/{a}/report','ManifestController@report');
+    Route::get('/manifest/{a}/excel','ManifestController@excel');
     Route::get('/manifest/indexjson','ManifestController@indexjson');
     Route::get('/manifest/csvall','ManifestController@csvall');
     Route::get('/manifest/destroymulti','ManifestController@destroymulti');
