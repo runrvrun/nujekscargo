@@ -17,6 +17,8 @@ use PDF;
 use Schema;
 use Session;
 use Validator;
+use App\Exports\ManifestsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ManifestController extends Controller
 {
@@ -299,7 +301,7 @@ class ManifestController extends Controller
     	return $pdf->stream();
     }
     
-    public function excel($manifest_id)
+    public function fastexcel($manifest_id)
     {
         $man = Manifest::find($manifest_id);
         $manifest = Spb::selectRaw("no_spb,customer as pengirim,recipient as penerima,item as barang,
@@ -312,6 +314,22 @@ class ManifestController extends Controller
         ->where('manifest_id',$manifest_id)
         ->get();
         return (new FastExcel($manifest))->download('Nujeks_manifest_'.$man->no_manifest.'.csv');
+    }
+    
+    public function excel($manifest_id)
+    {
+        $man = Manifest::find($manifest_id);
+        // $manifest = Spb::selectRaw("no_spb,customer as pengirim,recipient as penerima,item as barang,
+        // bale as koli,weight as berat, bale*weight as total_berat,
+        // CONCAT(length,'x',width,'x',height) as dimensi,
+        // length*width*height*bale/1000 as volume,packaging,no_po")
+        // ->leftJoin('customers','customer_id','customers.id')
+        // ->leftJoin('items','spb_id','spbs.id')
+        // ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+        // ->where('manifest_id',$manifest_id)
+        // ->get();
+        return Excel::download(new ManifestsExport($manifest_id), 'Nujeks_manifest_'.$man->no_manifest.'.xlsx');
+        // return (new ManifestsExport($manifest_id))->download('Nujeks_manifest_'.$man->no_manifest.'.xlsx');
     }
 
     public function spbindex($manifest_id)

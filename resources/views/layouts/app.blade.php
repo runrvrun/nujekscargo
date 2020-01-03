@@ -163,8 +163,10 @@
 
         <!-- BEGIN : Footer-->
         <footer class="footer footer-static footer-light">
-          <p class="pull-left clearfix text-muted text-sm-center px-2"><span>Copyright  &copy; 2019 PT Nusantara Jaya Ekspress, All rights reserved. </span></p>
-          <small class="pull-right clearfix text-muted text-sm-center px-2"><span>Powered by <a href="http://arfianagus.com/" target="_blank">arfianagus.com</a></span></small>
+          <p class="pull-left clearfix text-muted text-sm-center px-2">
+          <span>Copyright  &copy; 2019 PT Nusantara Jaya Ekspress, All rights reserved. </span>
+          <span style="font-size:6px;">Powered by <a href="http://arfianagus.com/">arfianagus.com</a> </span>
+          </p>
         </footer>
         <!-- End : Footer-->
 

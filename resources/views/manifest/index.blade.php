@@ -108,7 +108,7 @@ $(document).ready(function() {
             d.branch_province_id = {{ $branch->province_id }};
             @endif
             d.enddate = $('#enddate').val();
-            d.startdate = $('#enddate').val();
+            d.startdate = $('#startdate').val();
           }
         },
         columns: [
