@@ -450,6 +450,10 @@ class ManifestController extends Controller
 
     public function spbupdatestatus(Request $request)
     {
+        if($request->process == 'Lainnya' && !empty($request->processother)){
+            $request->process = $request->processother;
+        }
+
         if(!empty($request->sel_spb_id)){
             Spb::find($request->sel_spb_id)->update(['spb_status_id'=>$request->spb_status_id]);
             Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);

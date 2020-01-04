@@ -122,7 +122,8 @@
           Status: {{ Form::select('spb_status_id',\App\Spb_status::pluck('status','id'),null,['class'=>'form-control','id'=>'spb_status_id']) }}
           <div class="row" style="margin-top:3px;">
             <div class="col-6">
-              {{ Form::select('process',['Posisi barang di'=>'Posisi barang di','Proses bongkar di'=>'Proses bongkar di'],null,['class'=>'form-control','id'=>'process']) }}
+              {{ Form::select('process',['Posisi barang di'=>'Posisi barang di','Proses bongkar di'=>'Proses bongkar di','Lainnya'=>'Lainnya'],null,['class'=>'form-control','id'=>'process']) }}
+              <input type="text" name="processother" style="display:none" placeholder="Lainnya" class="form-control" />
             </div>
             <div class="col-6">
               {{ Form::select('city_id',\App\City::pluck('city','id'),null,['class'=>'form-control','id'=>'city_id']) }}
@@ -195,6 +196,14 @@
 <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>    
 <script>
 $(document).ready(function() {
+    $("#process").change(function(){
+      if($(this).val() == 'Lainnya'){
+        $("input[name=processother]").show();
+      }else{
+        $("input[name=processother]").hide();
+      }
+    });
+
     $("#spb_status_id").change(function(){
       var sel_status = $("#spb_status_id").val();
       if(sel_status == 1){
