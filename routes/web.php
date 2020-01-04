@@ -32,6 +32,7 @@ Route::group( ['middleware' => 'auth' ], function()
     Route::get('/user/indexjson','UserController@indexjson');
     Route::get('/user/csvall','UserController@csvall');
     Route::get('/user/destroymulti','UserController@destroymulti');
+    Route::get('/user/getcity','UserController@getcity');
     Route::resource('/user', 'UserController');
     Route::get('/role', 'RoleController@privilege');
     Route::get('/role/{a}', 'RoleController@privilege');

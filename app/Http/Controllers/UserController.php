@@ -221,4 +221,15 @@ class UserController extends Controller
             User::find($val->id)->update(['password'=>$hashpass]);
         }
     }
+
+    public function getcity(Request $request)
+    {
+        $city = User::select('city_id')->join('branches','branch_id','branches.id')
+        ->where('users.id',$request->user_id)->first();
+        if($city){
+            return $city->city_id;
+        }else{
+            return 0;
+        }
+    }
 }

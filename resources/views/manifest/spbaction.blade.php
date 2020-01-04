@@ -22,7 +22,7 @@
       }else{
         $("#branchdriver").hide();
       }
-      $("#spb_status_note").val('{{ $dt->note }}');
+      // $("#spb_status_note").val('{{ $dt->note }}');
       $("#spb-status-modal").modal('show');
     });
     

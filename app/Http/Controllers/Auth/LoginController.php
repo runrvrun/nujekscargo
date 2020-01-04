@@ -60,9 +60,11 @@ class LoginController extends Controller
             session(['privilege'=>$privilege]);
 
             // if operasional, count undelivered spb
-            if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
+            if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){    
                 $manifest = Manifest::where('driver_id',Auth::user()->id)->first();
-                $spb_undelivered = Spb::where('manifest_id',$manifest->id)->where('spb_status_id','!=',4)->count();
+                $spb_undelivered = Spb::leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+                ->where('manifest_id',$manifest->id)->where('spb_status_id','!=',4)->where('spb_status_id','!=',1)
+                ->count();
                 session(['spb_undelivered'=>$spb_undelivered]);
                 return redirect('/manifest/my');
             }

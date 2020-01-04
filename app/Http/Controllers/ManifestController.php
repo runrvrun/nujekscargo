@@ -463,7 +463,7 @@ class ManifestController extends Controller
 
         if(!empty($request->sel_spb_id)){
             Spb::find($request->sel_spb_id)->update(['spb_status_id'=>$request->spb_status_id]);
-            Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
+            Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'note'=>$request->spb_status_note,'created_by'=>Auth::user()->id,'track'=>$request->track]);
             if(!empty($request->warehouse_city_id)){
                 Spb_warehouse::create(['spb_id'=>$request->sel_spb_id,'city_id'=>$request->warehouse_city_id,'user_id'=>$request->user_id]);
             }
@@ -485,10 +485,18 @@ class ManifestController extends Controller
         }
         // if operasional, count undelivered spb
         if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
+            $spbwhspic = Spb::select('spbs.id')->distinct()
+            ->join('spb_warehouses','spbs.id','spb_id')
+            ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+            ->where('manifest_id',$manifest_id)
+            ->whereNotNull('user_id')->get();
+
             $manifest = Manifest::where('driver_id',Auth::user()->id)->first();
             $spb_undelivered = Spb::leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
             ->where('manifest_id',$manifest->id)
-            ->where('spb_status_id','!=',4)->count();
+            ->where('spb_status_id','!=',4)
+            ->whereNotIn('spb_id',$spbwhspic)
+            ->count();
             session(['spb_undelivered'=>$spb_undelivered]);
         }
         Session::flash('message', 'Status SPB diubah'); 

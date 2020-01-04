@@ -196,6 +196,18 @@
 <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>    
 <script>
 $(document).ready(function() {
+    $("#user_id").change(function(){
+      $.ajax({
+        url: "{{ url('/user/getcity') }}", 
+        data: {user_id: $(this).val()}, 
+        success: function(result){
+          if(result>0){
+          console.log(result);
+            $("#warehouse_city_id").val(result);
+            $('.selectpicker').selectpicker('refresh');
+          }
+      }});
+    });
     $("#process").change(function(){
       if($(this).val() == 'Lainnya'){
         $("input[name=processother]").show();
