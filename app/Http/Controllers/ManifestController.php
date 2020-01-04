@@ -391,6 +391,12 @@ class ManifestController extends Controller
 
     public function spbindexjson($manifest_id,Request $request)
     {
+        $spbwhspic = Spb::select('spbs.id')->distinct()
+        ->join('spb_warehouses','spbs.id','spb_id')
+        ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+        ->where('manifest_id',$manifest_id)
+        ->whereNotNull('user_id')->get();
+
         $spb = Spb::select('spbs.*','manifest_id','customer','province','city','status_code')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
@@ -402,9 +408,10 @@ class ManifestController extends Controller
         if($request->filterstatus >= 0){
             $spb->where('status_code',$request->filterstatus);
         }
-        // operasional jakarta/cabang hanya tampilkan yang bukan RCV TODO(dan bukan WHS+pic)
+        // operasional jakarta/cabang hanya tampilkan yang bukan RCV dan bukan WHS+pic
         if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
-            $spb->where('spb_status_id','!=',4);
+            $spb->where('spb_status_id','!=',4); // RCV\
+            $spb->whereNotIn('spbs.id',$spbwhspic);
         }
         
         return datatables($spb
@@ -479,7 +486,9 @@ class ManifestController extends Controller
         // if operasional, count undelivered spb
         if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
             $manifest = Manifest::where('driver_id',Auth::user()->id)->first();
-            $spb_undelivered = Spb::where('manifest_id',$manifest->id)->where('spb_status_id','!=',4)->count();
+            $spb_undelivered = Spb::leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+            ->where('manifest_id',$manifest->id)
+            ->where('spb_status_id','!=',4)->count();
             session(['spb_undelivered'=>$spb_undelivered]);
         }
         Session::flash('message', 'Status SPB diubah'); 
