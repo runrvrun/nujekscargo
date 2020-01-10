@@ -37,10 +37,10 @@
         </div>
 @endsection
 @section('pagecss')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="{{ asset('app-assets') }}css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<script src="{{ asset('app-assets') }}js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
   $("select[name='vehicle_id']").addClass('selectpicker'); // dropdown search with bootstrap select

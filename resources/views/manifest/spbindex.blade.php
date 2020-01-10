@@ -182,7 +182,7 @@
   }
 </style>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="{{ asset('app-assets') }}css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
 <script src="{{ asset('/') }}/app-assets/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
@@ -400,7 +400,7 @@ $(document).ready(function() {
 });
 </script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<script src="{{ asset('app-assets') }}js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
   $("select[name='user_id']").addClass('selectpicker'); // dropdown search with bootstrap select

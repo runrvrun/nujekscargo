@@ -167,6 +167,7 @@ return [
          * Package Service Providers...
          */
         Collective\Html\HtmlServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         Meneses\LaravelMpdf\LaravelMpdfServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
 
