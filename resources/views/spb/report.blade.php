@@ -165,7 +165,7 @@
                 <tr>
                     <td style="text-align:center;width:30%">
                         <table><tr><td style="text-transform:uppercase">
-                        STAFF NJE<br/><br/><br/><br/><br/><br/>{{ $spb->name }}
+                        STAFF NJE<br/><br/><br/><br/><br/><br/>{{ $spb->name ?? '_' }}
                         </td></tr></table>
                     </td>
                     <td style="width:5%"></td>

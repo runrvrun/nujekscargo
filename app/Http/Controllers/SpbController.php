@@ -387,7 +387,7 @@ class SpbController extends Controller
         ->where('spbs.id',$spb_id)
         ->first();
         $user = User::find($spb->created_by);
-        $userbranch = Branch::find($user->branch_id);
+        $userbranch = Branch::find($user->branch_id ?? 23);
         $pdf = PDF::loadview('spb.report',compact('spb','userbranch'),[],['title' => 'Nujeks - SPB_'.$spb->no_spb.'.pdf']);        
     	return $pdf->stream();
     }
