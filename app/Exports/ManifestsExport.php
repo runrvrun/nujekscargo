@@ -6,9 +6,8 @@ use App\Manifest;
 use App\Spb;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ManifestsExport implements FromView, ShouldAutoSize
+class ManifestsExport implements FromView
 {
     public function __construct(int $manifest_id)
     {

@@ -163,6 +163,9 @@ $(document).ready(function() {
             targets: ['id','created_at','updated_at','created_by','updated_by'],
             visible: false,
             searchable: false,
+        },{
+            targets: ['count_spb'],
+            searchable: false,
         } ],
         select: {
             style:    'multi',

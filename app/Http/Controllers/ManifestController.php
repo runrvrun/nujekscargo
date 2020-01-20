@@ -291,7 +291,7 @@ class ManifestController extends Controller
     {
         $manifest = Manifest::select('manifests.*','name')->where('manifests.id',$manifest_id)
         ->leftJoin('users','created_by','users.id')->first();
-        $spb = Spb::with('items')->select('spbs.*','customer')
+        $spb = Spb::with('items')->select('spbs.*','customer','customers.address','spbs.address as spbaddress')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
         ->where('manifest_id',$manifest_id)

@@ -66,8 +66,8 @@
                     <tr>
                         <td style="text-align:right" rowspan="2">{{ $key+1 }}</td>
                         <td rowspan="2">{{ $val->no_spb }}</td>
-                        <td>{{ $val->customer }}</td>
-                        <td>{{ $val->recipient }}</td>
+                        <td>{{ $val->customer }}<div>{{ $val->address }}</div></td>
+                        <td>{{ $val->recipient }}<div>{{ $val->spbaddress }}</div></td>
                         <td></td>
                     </tr>
                     <tr>

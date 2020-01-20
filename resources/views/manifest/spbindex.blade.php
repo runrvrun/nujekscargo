@@ -32,6 +32,7 @@
                 <button class="btn btn-primary-outline WHS filterstatus" data-status="WHS">WHS</button>
                 <button class="btn btn-primary-outline DLY filterstatus" data-status="DLY">DLY</button>
                 <button class="btn btn-primary-outline RCV filterstatus" data-status="RCV">RCV</button>
+                <button class="btn btn-primary-outline DIS filterstatus" data-status="DIS">DIS</button>
                 {{ Form::hidden('filterstatus',-1,['id'=>'filterstatus'])}}
               </div>
             </div>
@@ -169,13 +170,14 @@
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <style>
   .status_code a{color:#fff}
-  .WHS,.OTW,.DLY,.RCV,.BTO,.ORD,.NEW,.SEN,.IOP,.PAI,.CLR{display: inline-block; padding: 0.375rem 0.75rem;font-size: 1rem;line-height: 1;border-radius: 0.25rem;color: #fff;background-color: #000;}
+  .WHS,.OTW,.DLY,.RCV,.BTO,.ORD,.NEW,.SEN,.IOP,.PAI,.CLR,.DIS{display: inline-block; padding: 0.375rem 0.75rem;font-size: 1rem;line-height: 1;border-radius: 0.25rem;color: #fff;background-color: #000;}
   .WHS{background-color: #ff8040;}
   .OTW{background-color: #0080ff;}
   .DLY{background-color: #ffff00;color:#000;}
   .RCV{background-color: #408080;}
   .BTO,.ORD{background-color: #FF586B;}
   .PAI,.CLR{background-color: #008000;}
+  .DIS{background-color: #cc1818;}
 
   .btn-block{
     text-align:left;
