@@ -72,10 +72,10 @@ class SpbController extends Controller
                 'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
             ];
             $cols['no_po'] = ['column'=>'no_po','dbcolumn'=>'items.no_po',
-                    'caption'=>'No PO',
-                    'type' => 'text', 
-                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
-                ];
+                'caption'=>'No PO',
+                'type' => 'text', 
+                'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+            ];
         } 
         // modify defaults
         $cols['no_spb']['readonly'] = 1;

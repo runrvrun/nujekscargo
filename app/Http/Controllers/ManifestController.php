@@ -70,6 +70,11 @@ class ManifestController extends Controller
             'type' => 'text',
             'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
         ];
+        $cols['no_spb'] = ['column'=>'no_spb','dbcolumn'=>'spbs.no_spb',
+            'caption'=>'SPB',
+            'type' => 'text', 
+            'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+        ];
         // modify defaults
         $cols['origin_province_id']['caption'] = 'Origin';
         $cols['origin_province_id']['type'] = 'dropdown';
@@ -138,11 +143,13 @@ class ManifestController extends Controller
         $userbranch = Branch::find(Auth::user()->branch_id);
         $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination','users.name as driver','no_plate')
         ->addSelect(DB::raw('count(DISTINCT spb_id) as count_spb'))
+        ->addSelect(DB::raw('GROUP_CONCAT(DISTINCT no_spb ORDER BY no_spb ASC SEPARATOR \', \') as no_spb'))
         ->leftJoin('provinces as ori','origin_province_id','ori.id')
         ->leftJoin('provinces as des','destination_province_id','des.id')
         ->leftJoin('users','driver_id','users.id')
         ->leftJoin('vehicles','vehicle_id','vehicles.id')
         ->leftJoin('manifest_spbs','manifest_spbs.manifest_id','manifests.id')
+        ->leftJoin('spbs','spbs.id','manifest_spbs.spb_id')
         ->groupBy('manifests.id');
         
         if($userbranch->type != 'Pusat'){

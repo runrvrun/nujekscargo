@@ -166,6 +166,9 @@ $(document).ready(function() {
             visible: false,
             searchable: false,
         },{
+            targets: ['no_spb'],
+            visible: false,
+        },{
             targets: ['count_spb'],
             searchable: false,
         } ],
