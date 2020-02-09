@@ -66,7 +66,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->address }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }}</td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }} <p>PIC: {{ $s->pic_contact }} - {{ $s->pic_phone }}</p></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
@@ -100,7 +100,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word;word-wrap: break-word">{{ $s->address }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }}</td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }} <p>PIC: {{ $s->pic_contact }} - {{ $s->pic_phone }}</p></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
@@ -134,7 +134,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->address }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }}</td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }} <p>PIC: {{ $s->pic_contact }} - {{ $s->pic_phone }}</p></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[1]->item }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->bale }}<?php $stbale+=$s->items[1]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->weight }}</td>
@@ -180,7 +180,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->address }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }}</td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->spbaddress }} <p>PIC: {{ $s->pic_contact }} - {{ $s->pic_phone }}</p></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[1]->item }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->bale }}<?php $stbale+=$s->items[1]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->weight }}</td>

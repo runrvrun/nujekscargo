@@ -18,7 +18,7 @@ class ManifestsExport implements FromView
     {
         // return Manifest::query();
         $manifest = Manifest::select('no_manifest','title','manifests.created_at','name')->where('manifests.id',$this->manifest_id)->leftJoin('users','manifests.created_by','users.id')->first();
-        $spb = Spb::with('items')->select('spbs.id','no_spb','customer','customers.address','spbs.address as spbaddress','recipient')
+        $spb = Spb::with('items')->select('spbs.id','no_spb','customer','customers.address','spbs.address as spbaddress','recipient', 'spbs.pic_contact','spbs.pic_phone')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
         ->where('manifest_id',$this->manifest_id)

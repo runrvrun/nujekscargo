@@ -29,7 +29,8 @@
           <div class="col-2"></div>
           <div class="recipient col-5">
           <p>Penerima:</p>
-          {{ $spb->recipient }}<br>{{ $spb->address }}<br>{{ $spb->city }}<br>{{ $spb->province }}
+          {{ $spb->recipient }}<br>{{ $spb->address }}<div>{{ $spb->city }}</div><div>{{ $spb->province }}</div>
+          <p>PIC: {{ $spb->pic_contact }} - {{ $spb->pic_phone }}</p>
           </div>
         </div>
         <div class="card-header row col-12">
