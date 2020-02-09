@@ -418,7 +418,10 @@ class ManifestController extends Controller
         }
         // operasional jakarta/cabang hanya tampilkan yang bukan RCV dan bukan WHS+pic
         if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
-            $spb->where('spb_status_id','!=',4); // RCV\
+            $spb ->where(function ($q) {
+                $q->whereNull('spb_status_id')
+                    ->orWhere('spb_status_id', '!=', 4);
+                }); // RCV
             $spb->whereNotIn('spbs.id',$spbwhspic);
         }
         
