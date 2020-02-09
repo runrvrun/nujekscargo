@@ -37,17 +37,19 @@
         </div>
 @endsection
 @section('pagecss')
-<link rel="stylesheet" href="{{ asset('app-assets') }}css/bootstrap-select.min.css">
+<link rel="stylesheet" href="{{ asset('app-assets') }}/css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
-<script src="{{ asset('app-assets') }}js/bootstrap-select.min.js"></script>
+<script src="{{ asset('app-assets') }}/js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
   @if(isset($no_spb))
   $("input[name='no_spb']").val('{{ $no_spb }}'); // fill next spb no
+  $("input[name='no_spb']").attr('readonly','readonly');
   @endif
   $("select[name='customer_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='customer_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='customer_id']").selectpicker();
 });
 </script>
 <script>
@@ -58,6 +60,21 @@ $(document).ready(function(){
     $("select[name='city_id'] option").hide();
     $("select[name='city_id'] option[value^='"+ val +"']").show();
     $("select[name='city_id'] option[value^='"+ val +"']:first").attr('selected','selected');
+    $("select[name='city_id']").attr('data-live-search','true');
+    $("select[name='city_id']").attr('data-size','4');
+    $("select[name='city_id']").selectpicker('refresh');
   });  
+</script>
+<script>
+  $(document).ready(function(){
+    $("select[name='province_id']").change();
+    // dropdown search with bootstrap select
+    $("select[name='province_id']").attr('data-live-search','true');
+    $("select[name='province_id']").attr('data-size','4');
+    $("select[name='province_id']").selectpicker();
+    $("select[name='city_id']").attr('data-live-search','true');
+    $("select[name='city_id']").attr('data-size','4');
+    $("select[name='city_id']").selectpicker();
+  });
 </script>
 @endsection

@@ -37,16 +37,18 @@
         </div>
 @endsection
 @section('pagecss')
+<link rel="stylesheet" href="{{ asset('app-assets') }}/css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
+<script src="{{ asset('app-assets') }}/js/bootstrap-select.min.js"></script>
 <script>
-  // make city dropdown conditional to province
-  $("select[name='province_id']").change(function () {
-    var opt = $("option:selected", this);
-    var val = this.value;
-    $("select[name='city_id'] option").hide();
-    $("select[name='city_id'] option[value^='"+ val +"']").show();
-    $("select[name='city_id'] option[value^='"+ val +"']:first").attr('selected','selected');
-  });  
+  $(document).ready(function(){
+    $("select[name='branch_id']").addClass('selectpicker');
+    $("select[name='branch_id']").attr('data-live-search','true');
+    $("select[name='branch_id']").attr('data-size','5');
+    $("select[name='branch_id']").selectpicker();
+    // turn off autocomplete on password
+    $("input[name='password']").attr('autocomplete','off');
+  });
 </script>
 @endsection

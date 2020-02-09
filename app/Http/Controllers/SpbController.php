@@ -225,8 +225,9 @@ class SpbController extends Controller
 
     public function next_no_spb($branch_id){
         $branch = Branch::find($branch_id);
-        $spb = Spb::selectRaw('MAX(SUBSTR(no_spb,6))+1 as next_spb_no')->whereRaw('no_spb LIKE (\'SPB'.$branch->code.'%\')')->first();
-        $next_spb_no = 'SPB'.$branch->code.str_pad($spb->next_spb_no,6,'0',STR_PAD_LEFT);
+        $spb = Spb::selectRaw('MAX(SUBSTR(no_spb,8))+1 as max_spb_no')->whereRaw('no_spb LIKE (\'SPB'.$branch->code.'%\')')->first();
+        $nextspb = $spb->max_spb_no + 1;
+        $next_spb_no = 'SPB'.$branch->code.str_pad($nextspb,6,'0',STR_PAD_LEFT);
         return $next_spb_no;
     }
 

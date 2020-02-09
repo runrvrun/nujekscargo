@@ -195,8 +195,9 @@ class ManifestController extends Controller
     
     public function next_no_manifest($branch_id){
         $branch = Branch::find($branch_id);
-        $manifest = Manifest::selectRaw('MAX(SUBSTR(no_manifest,6))+1 as next_manifest_no')->whereRaw('no_manifest LIKE (\'MAID'.$branch->code.'%\')')->first();
-        $next_manifest_no = 'MAID'.$branch->code.str_pad($manifest->next_manifest_no,6,'0',STR_PAD_LEFT);
+        $manifest = Manifest::selectRaw('MAX(SUBSTR(no_manifest,8)) as max_manifest_no')->whereRaw('no_manifest LIKE (\'MAID'.$branch->code.'%\')')->first();
+        $nextmanifest = $manifest->max_manifest_no + 1;
+        $next_manifest_no = 'MAID'.$branch->code.str_pad($nextmanifest,6,'0',STR_PAD_LEFT);
         return $next_manifest_no;
     }
 
@@ -307,7 +308,7 @@ class ManifestController extends Controller
         $manifest = Spb::selectRaw("no_spb,customer as pengirim,recipient as penerima,item as barang,
         bale as koli,weight as berat, bale*weight as total_berat,
         CONCAT(length,'x',width,'x',height) as dimensi,
-        length*width*height*bale/1000 as volume,packaging,no_po")
+        length*width*height*bale/1000000 as volume,packaging,no_po")
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('items','spb_id','spbs.id')
         ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
@@ -322,7 +323,7 @@ class ManifestController extends Controller
         // $manifest = Spb::selectRaw("no_spb,customer as pengirim,recipient as penerima,item as barang,
         // bale as koli,weight as berat, bale*weight as total_berat,
         // CONCAT(length,'x',width,'x',height) as dimensi,
-        // length*width*height*bale/1000 as volume,packaging,no_po")
+        // length*width*height*bale/1000000 as volume,packaging,no_po")
         // ->leftJoin('customers','customer_id','customers.id')
         // ->leftJoin('items','spb_id','spbs.id')
         // ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')

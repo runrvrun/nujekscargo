@@ -142,12 +142,14 @@ $(document).ready(function() {
                   window.location = '{{ url('manifest/csvall') }}'
               }
             },
+            @if(session('privilege')[3]["delete"] ?? 0)
             {
               text: '<i class="ft-trash"></i> Hapus', className: 'buttons-deletemulti',
               action: function ( e, dt, node, config ) {
 
               }
             },  
+            @endif
         ],
         lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
         columnDefs: [ {

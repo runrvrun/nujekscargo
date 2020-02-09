@@ -184,7 +184,7 @@
   }
 </style>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="{{ asset('app-assets') }}css/bootstrap-select.min.css">
+<link rel="stylesheet" href="{{ asset('app-assets') }}/css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
 <script src="{{ asset('/') }}/app-assets/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
@@ -402,18 +402,21 @@ $(document).ready(function() {
 });
 </script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="{{ asset('app-assets') }}js/bootstrap-select.min.js"></script>
+<script src="{{ asset('app-assets') }}/js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
   $("select[name='user_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='user_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='user_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='user_id']").selectpicker();
   $("select[name='city_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='city_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='city_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='city_id']").selectpicker();
   $("select[name='warehouse_city_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='warehouse_city_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='warehouse_city_id']").attr('data-size','4'); // dropdown search with bootstrap select
-});
+  $("select[name='warehouse_city_id']").selectpicker();
+}) ;
 </script>
 @endsection

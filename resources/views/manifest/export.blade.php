@@ -91,7 +91,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->weight }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->weight*$s->items[0]->bale }}<?php $stweight+=$s->items[0]->weight*$s->items[0]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;text-align:right">{{ $s->items[0]->length.'x'.$s->items[0]->width.'x'.$s->items[0]->height }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000 }}<?php $stvolume+=$s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000;?></td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000000 }}<?php $stvolume+=$s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000000;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;word-wrap: break-word">{{ $s->items[0]->packaging }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;word-wrap: break-word">{{ $s->items[0]->no_po }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black"></td>
@@ -125,7 +125,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->weight }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->weight*$s->items[0]->bale }}<?php $stweight+=$s->items[0]->weight*$s->items[0]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;text-align:right">{{ $s->items[0]->length.'x'.$s->items[0]->width.'x'.$s->items[0]->height }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000 }}<?php $stvolume+=$s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000;?></td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000000 }}<?php $stvolume+=$s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000000;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;word-wrap: break-word">{{ $s->items[0]->packaging }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;word-wrap: break-word">{{ $s->items[0]->no_po }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black"></td>
@@ -140,7 +140,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->weight }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->weight*$s->items[1]->bale }}<?php $stweight+=$s->items[1]->weight*$s->items[1]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;text-align:right">{{ $s->items[1]->length.'x'.$s->items[1]->width.'x'.$s->items[1]->height }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000 }}<?php $stvolume+=$s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000;?></td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000000 }}<?php $stvolume+=$s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000000;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[1]->packaging }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[1]->no_po }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
@@ -171,7 +171,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->weight }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->weight*$s->items[0]->bale }}<?php $stweight+=$s->items[0]->weight*$s->items[0]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;text-align:right">{{ $s->items[0]->length.'x'.$s->items[0]->width.'x'.$s->items[0]->height }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000 }}<?php $stvolume+=$s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000;?></td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black">{{ $s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000000 }}<?php $stvolume+=$s->items[0]->length*$s->items[0]->width*$s->items[0]->height*$s->items[0]->bale/1000000;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;word-wrap: break-word">{{ $s->items[0]->packaging }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;word-wrap: break-word">{{ $s->items[0]->no_po }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;border-top:1px solid black"></td>
@@ -186,7 +186,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->weight }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->weight*$s->items[1]->bale }}<?php $stweight+=$s->items[1]->weight*$s->items[1]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;text-align:right">{{ $s->items[1]->length.'x'.$s->items[1]->width.'x'.$s->items[1]->height }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000 }}<?php $stvolume+=$s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000;?></td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000000 }}<?php $stvolume+=$s->items[1]->length*$s->items[1]->width*$s->items[1]->height*$s->items[1]->bale/1000000;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[1]->packaging }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[1]->no_po }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>
@@ -202,7 +202,7 @@
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[$i]->weight }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[$i]->weight*$s->items[$i]->bale }}<?php $stweight+=$s->items[$i]->weight*$s->items[$i]->bale;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;text-align:right">{{ $s->items[$i]->length.'x'.$s->items[$i]->width.'x'.$s->items[$i]->height }}</td>
-                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[$i]->length*$s->items[$i]->width*$s->items[$i]->height*$s->items[$i]->bale/1000 }}<?php $stvolume+=$s->items[$i]->length*$s->items[$i]->width*$s->items[$i]->height*$s->items[$i]->bale/1000;?></td>
+                <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black">{{ $s->items[$i]->length*$s->items[$i]->width*$s->items[$i]->height*$s->items[$i]->bale/1000000 }}<?php $stvolume+=$s->items[$i]->length*$s->items[$i]->width*$s->items[$i]->height*$s->items[$i]->bale/1000000;?></td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[$i]->packaging }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black;word-wrap: break-word">{{ $s->items[$i]->no_po }}</td>
                 <td style="vertical-align:top;border-left:1px solid black;border-right:1px solid black"></td>

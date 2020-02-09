@@ -37,8 +37,10 @@
         </div>
 @endsection
 @section('pagecss')
+<link rel="stylesheet" href="{{ asset('app-assets') }}/css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
+<script src="{{ asset('app-assets') }}/js/bootstrap-select.min.js"></script>
 <script>
   // remove dot (.) after PT / CV
   $("input[name='customer']").change(function(){
@@ -58,6 +60,22 @@
     $("select[name='city_id'] option").hide();
     $("select[name='city_id'] option[value^='"+ val +"']").show();
     $("select[name='city_id'] option[value^='"+ val +"']:first").attr('selected','selected');
+    $("select[name='city_id']").attr('data-live-search','true');
+    $("select[name='city_id']").attr('data-size','4');
+    $("select[name='city_id']").selectpicker('refresh');
   });  
+</script>
+<script>
+  $(document).ready(function(){
+    $("select[name='province_id']").change();
+    // dropdown search with bootstrap select
+    $("select[name='province_id']").attr('data-live-search','true');
+    $("select[name='province_id']").attr('data-size','4');
+    $("select[name='province_id']").selectpicker();
+    $("select[name='city_id']").addClass('selectpicker');
+    $("select[name='city_id']").attr('data-live-search','true');
+    $("select[name='city_id']").attr('data-size','4');
+    $("select[name='city_id']").selectpicker();
+  });
 </script>
 @endsection

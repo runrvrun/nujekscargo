@@ -37,25 +37,36 @@
         </div>
 @endsection
 @section('pagecss')
-<link rel="stylesheet" href="{{ asset('app-assets') }}css/bootstrap-select.min.css">
+<link rel="stylesheet" href="{{ asset('app-assets') }}/css/bootstrap-select.min.css">
 @endsection
 @section('pagejs')
-<script src="{{ asset('app-assets') }}js/bootstrap-select.min.js"></script>
+<script src="{{ asset('app-assets') }}/js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
   $("select[name='vehicle_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='vehicle_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='vehicle_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='vehicle_id']").selectpicker();
   $("select[name='driver_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='driver_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
-  $("select[name='driver_id']").attr('data-size','3'); // dropdown search with bootstrap select
+  $("select[name='driver_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='driver_id']").selectpicker();
+  $("select[name='origin_province_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='origin_province_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='origin_province_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='origin_province_id']").selectpicker();
+  $("select[name='destination_province_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='destination_province_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='destination_province_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='destination_province_id']").selectpicker();
 });
 </script>
 <script>
 $(document).ready(function(){
   @if(isset($no_manifest))
   $("input[name='no_manifest']").val('{{ $no_manifest }}'); // fill next manifest no
-  @endif
+  $("input[name='no_manifest']").attr('readonly','readonly');
+  @endif 
 });
 </script>
 @endsection

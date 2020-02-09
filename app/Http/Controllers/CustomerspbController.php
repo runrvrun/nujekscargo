@@ -149,6 +149,10 @@ class CustomerspbController extends Controller
         $cols['branch_id']['R'] = 0;
         $cols['branch_id']['E'] = 0;
         $cols['branch_id']['A'] = 0;
+        $cols['note']['B'] = 0;
+        $cols['note']['R'] = 0;
+        $cols['note']['E'] = 0;
+        $cols['note']['A'] = 0;
 
         $this->cols = $cols;
     }
@@ -168,14 +172,16 @@ class CustomerspbController extends Controller
     {
         // dd($request->all());
         $spb = Spb::select('spbs.*','customer','city','province','payment_type','status_code','status','no_manifest')
-        ->addSelect(DB::raw('GROUP_CONCAT(no_po ORDER BY no_po ASC SEPARATOR \', \') as no_po'))
+        ->addSelect(DB::raw('GROUP_CONCAT(NULLIF(NULLIF(NULLIF(NULLIF(NULLIF(trim(no_po),\'-\'),\'\'),\'NO PO\'),\'SJ\'),\'NO  PO\')
+         ORDER BY no_po ASC SEPARATOR \', \') as no_po'))
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
         ->leftJoin('spb_payment_types','spb_payment_type_id','spb_payment_types.id')
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
-        ->leftJoin('items','spb_id','spbs.id')
-        ->leftJoin('manifests','manifest_id','manifests.id')
+        ->leftJoin('items','items.spb_id','spbs.id')
+        ->leftJoin('manifest_spbs','spbs.id','manifest_spbs.spb_id')
+        ->leftJoin('manifests','manifest_spbs.manifest_id','manifests.id')
         ->groupBy('spbs.id');
         
         $spb->where('customer_id',$request->customer_id);
