@@ -137,7 +137,8 @@ class ManifestController extends Controller
     {
         /*
         * RULES
-        * user cabang hanya bisa lihat manifest berasal dari cabangnya
+        * user cabang hanya bisa lihat manifest berasal dari cabangnya, 
+        * atau menuju provinsi cabangnya
         * operasional cabang hanya bisa lihat manifest dari cabangnya yang drivernya dia
         */
         $userbranch = Branch::find(Auth::user()->branch_id);
@@ -152,13 +153,23 @@ class ManifestController extends Controller
         ->leftJoin('spbs','spbs.id','manifest_spbs.spb_id')
         ->groupBy('manifests.id');
         
+        // cabang, hanya tampilkan yang asal/tujuan cabangnya
         if($userbranch->type != 'Pusat'){
-            $manifest->where('origin_province_id',$userbranch->province_id);
+            // $manifest->where('origin_province_id',$userbranch->province_id);
+            $manifest->where(function ($q) use ($userbranch) {
+                $q->where('origin_province_id',$userbranch->province_id)
+                    ->orWhere('destination_province_id',$userbranch->province_id)
+                    ->orWhere('manifests.created_by',Auth::user()->id);
+            });
         }
         
         // operasional jakarta/cabang hanya tampilkan yang dia sebagai driver
         if(Auth::user()->role_id == 6 || Auth::user()->role_id == 9){
-            $manifest->where('driver_id',Auth::user()->id);
+            // $manifest->where('driver_id',Auth::user()->id);
+            $manifest->where(function ($q) {
+                $q->where('driver_id',Auth::user()->id)
+                    ->orWhere('manifests.created_by',Auth::user()->id);
+            });
         }
 
         if($request->startdate > '1990-01-01'){
@@ -202,7 +213,8 @@ class ManifestController extends Controller
     
     public function next_no_manifest($branch_id){
         $branch = Branch::find($branch_id);
-        $manifest = Manifest::selectRaw('MAX(SUBSTR(no_manifest,8)) as max_manifest_no')->whereRaw('no_manifest LIKE (\'MAID'.$branch->code.'%\')')->first();
+        // $manifest = Manifest::selectRaw('MAX(SUBSTR(no_manifest,8)) as max_manifest_no')->whereRaw('no_manifest LIKE (\'MAID'.$branch->code.'%\')')->first();
+        $manifest = Manifest::selectRaw('MAX(RIGHT(no_manifest,6)) as max_manifest_no')->whereRaw('no_manifest LIKE (\'MAID'.$branch->code.'%\')')->first();
         $nextmanifest = $manifest->max_manifest_no + 1;
         $next_manifest_no = 'MAID'.$branch->code.str_pad($nextmanifest,6,'0',STR_PAD_LEFT);
         return $next_manifest_no;
@@ -215,12 +227,13 @@ class ManifestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {//alpha_num|max:12|min:12|
         $request->validate([
             'no_manifest' => 'required|unique:manifests,no_manifest,null,id,deleted_at,NULL',
         ]);
 
         $requestData = $request->all();
+        $requestData['created_by'] = Auth::user()->id;
         Manifest::create($requestData);
         Session::flash('message', 'Manifest ditambahkan'); 
         Session::flash('alert-class', 'alert-success'); 
@@ -468,8 +481,12 @@ class ManifestController extends Controller
 
     public function spbupdatestatus(Request $request)
     {
+        // dd($request->all());
         if($request->process == 'Lainnya' && !empty($request->processother)){
             $request->process = $request->processother;
+        }
+        if($request->process == 'Lainnya' && empty($request->processother)){
+            $request->process = '';
         }
 
         if(!empty($request->sel_spb_id)){
@@ -499,8 +516,11 @@ class ManifestController extends Controller
             $spbwhspic = Spb::select('spbs.id')->distinct()
             ->join('spb_warehouses','spbs.id','spb_id')
             ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
-            ->where('manifest_id',$manifest_id)
-            ->whereNotNull('user_id')->get();
+            // ->where('manifest_id',$manifest_id)
+            ->where('spb_warehouses.created_by',Auth::user()->id)
+            // ->whereNotNull('user_id')
+            ->get();
+            // dd($spbwhspic);
 
             $manifest = Manifest::where('driver_id',Auth::user()->id)->first();
             $spb_undelivered = Spb::leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')

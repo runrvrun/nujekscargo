@@ -179,7 +179,7 @@ class SpbController extends Controller
         
         $userbranch = Branch::find(Auth::user()->branch_id);
         if($userbranch->type != 'Pusat'){
-            $spb->whereRaw('(spbs.branch_id=11 OR spbs.id IN (SELECT spb_id FROM spb_warehouses WHERE city_id=1671))');
+            $spb->whereRaw('(spbs.branch_id='.Auth::user()->branch_id.' OR spbs.id IN (SELECT spb_id FROM spb_warehouses WHERE city_id='.$userbranch->city_id.'))');
         }
 
         if($request->filterstatus >= 0){
@@ -225,7 +225,8 @@ class SpbController extends Controller
 
     public function next_no_spb($branch_id){
         $branch = Branch::find($branch_id);
-        $spb = Spb::selectRaw('MAX(SUBSTR(no_spb,7)) as max_spb_no')->whereRaw('no_spb LIKE (\'SPB'.$branch->code.'%\')')->first();
+        // $spb = Spb::selectRaw('MAX(SUBSTR(no_spb,7)) as max_spb_no')->whereRaw('no_spb LIKE (\'SPB'.$branch->code.'%\')')->first();
+        $spb = Spb::selectRaw('MAX(RIGHT(no_spb,6)) as max_spb_no')->whereRaw('no_spb LIKE (\'SPB'.$branch->code.'%\')')->first();
         $nextspb = $spb->max_spb_no + 1;
         $next_spb_no = 'SPB'.$branch->code.str_pad($nextspb,6,'0',STR_PAD_LEFT);
         return $next_spb_no;
@@ -238,7 +239,7 @@ class SpbController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {//alpha_num|max:11|min:11|
         $request->validate([
             'no_spb' => 'required|unique:spbs,no_spb,null,id,deleted_at,NULL',
             'customer_id' => 'required',
