@@ -50,6 +50,27 @@ class ManifestController extends Controller
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
+            if($val == 'destination2_province_id'){
+                $cols['destination2'] = ['column'=>'destination2','dbcolumn'=>'des2.province',
+                    'caption'=>'Destination 2',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
+            if($val == 'destination3_province_id'){
+                $cols['destination3'] = ['column'=>'destination3','dbcolumn'=>'des3.province',
+                    'caption'=>'Destination 3',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
+            if($val == 'destination4_province_id'){
+                $cols['destination4'] = ['column'=>'destination4','dbcolumn'=>'des4.province',
+                    'caption'=>'Destination 4',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
             if($val == 'driver_id'){
                 $cols['driver'] = ['column'=>'driver','dbcolumn'=>'users.name',
                     'caption'=>'Driver',
@@ -88,6 +109,27 @@ class ManifestController extends Controller
         $cols['destination_province_id']['dropdown_value'] = 'id';
         $cols['destination_province_id']['dropdown_caption'] = 'province';
         $cols['destination_province_id']['B'] = 0;
+        $cols['destination2_province_id']['caption'] = 'Destination 2';
+        $cols['destination2_province_id']['type'] = 'dropdown';
+        $cols['destination2_province_id']['dropdown_model'] = 'App\Province';
+        $cols['destination2_province_id']['dropdown_value'] = 'id';
+        $cols['destination2_province_id']['dropdown_caption'] = 'province';
+        $cols['destination2_province_id']['dropdown_firstempty'] = 1;
+        $cols['destination2_province_id']['B'] = 0;
+        $cols['destination3_province_id']['caption'] = 'Destination 3';
+        $cols['destination3_province_id']['type'] = 'dropdown';
+        $cols['destination3_province_id']['dropdown_model'] = 'App\Province';
+        $cols['destination3_province_id']['dropdown_value'] = 'id';
+        $cols['destination3_province_id']['dropdown_caption'] = 'province';
+        $cols['destination3_province_id']['dropdown_firstempty'] = 1;
+        $cols['destination3_province_id']['B'] = 0;
+        $cols['destination4_province_id']['caption'] = 'Destination 4';
+        $cols['destination4_province_id']['type'] = 'dropdown';
+        $cols['destination4_province_id']['dropdown_model'] = 'App\Province';
+        $cols['destination4_province_id']['dropdown_value'] = 'id';
+        $cols['destination4_province_id']['dropdown_caption'] = 'province';
+        $cols['destination4_province_id']['dropdown_firstempty'] = 1;
+        $cols['destination4_province_id']['B'] = 0;
         $cols['created_by']['R'] = 0;
         $cols['created_by']['E'] = 0;
         $cols['created_by']['A'] = 0;
@@ -142,11 +184,15 @@ class ManifestController extends Controller
         * operasional cabang hanya bisa lihat manifest dari cabangnya yang drivernya dia
         */
         $userbranch = Branch::find(Auth::user()->branch_id);
-        $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination','users.name as driver','no_plate')
+        $manifest = Manifest::select('manifests.*','ori.province as origin','des.province as destination'
+        ,'des2.province as destination2','des3.province as destination3','des4.province as destination4','users.name as driver','no_plate')
         ->addSelect(DB::raw('count(DISTINCT spb_id) as count_spb'))
         ->addSelect(DB::raw('GROUP_CONCAT(DISTINCT no_spb ORDER BY no_spb ASC SEPARATOR \', \') as no_spb'))
         ->leftJoin('provinces as ori','origin_province_id','ori.id')
         ->leftJoin('provinces as des','destination_province_id','des.id')
+        ->leftJoin('provinces as des2','destination2_province_id','des2.id')
+        ->leftJoin('provinces as des3','destination3_province_id','des3.id')
+        ->leftJoin('provinces as des4','destination4_province_id','des4.id')
         ->leftJoin('users','driver_id','users.id')
         ->leftJoin('vehicles','vehicle_id','vehicles.id')
         ->leftJoin('manifest_spbs','manifest_spbs.manifest_id','manifests.id')
@@ -159,6 +205,9 @@ class ManifestController extends Controller
             $manifest->where(function ($q) use ($userbranch) {
                 $q->where('origin_province_id',$userbranch->province_id)
                     ->orWhere('destination_province_id',$userbranch->province_id)
+                    ->orWhere('destination2_province_id',$userbranch->province_id)
+                    ->orWhere('destination3_province_id',$userbranch->province_id)
+                    ->orWhere('destination4_province_id',$userbranch->province_id)
                     ->orWhere('manifests.created_by',Auth::user()->id);
             });
         }
@@ -472,6 +521,10 @@ class ManifestController extends Controller
         $spb_add = preg_split('@,@', $spb_add, NULL, PREG_SPLIT_NO_EMPTY);
         foreach($spb_add as $val){
             $spb = Spb::where('no_spb',$val)->first();
+            $spbexist = Manifest_spb::where('manifest_id',$request->manifest_id)->where('spb_id',$spb->id)->first();
+            if($spbexist){
+                continue;
+            }
             Manifest_spb::create(['manifest_id'=>$request->manifest_id,'spb_id'=>$spb->id]);
         }
         Session::flash('message', 'SPB ditambahkan ke Manifest'); 

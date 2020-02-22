@@ -59,6 +59,18 @@ $(document).ready(function(){
   $("select[name='destination_province_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='destination_province_id']").attr('data-size','4'); // dropdown search with bootstrap select
   $("select[name='destination_province_id']").selectpicker();
+  $("select[name='destination2_province_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='destination2_province_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='destination2_province_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='destination2_province_id']").selectpicker();
+  $("select[name='destination3_province_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='destination3_province_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='destination3_province_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='destination3_province_id']").selectpicker();
+  $("select[name='destination4_province_id']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='destination4_province_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='destination4_province_id']").attr('data-size','4'); // dropdown search with bootstrap select
+  $("select[name='destination4_province_id']").selectpicker();
 });
 </script>
 <script>

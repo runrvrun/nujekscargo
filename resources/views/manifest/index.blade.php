@@ -166,7 +166,7 @@ $(document).ready(function() {
             visible: false,
             searchable: false,
         },{
-            targets: ['no_spb'],
+            targets: ['no_spb','destination2','destination3','destination4'],
             visible: false,
         },{
             targets: ['count_spb'],

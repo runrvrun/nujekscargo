@@ -78,25 +78,30 @@
       <div class="modal-body">          
           @csrf
           {{ Form::hidden('manifest_id', $manifest->id) }}
-            <div class="input-group row">
-              <div class="col-sm-4">
-                <input id="searchspbterm" type="text" class="form-control" placeholder="Cari SPB">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="input-group">
+                  <input id="searchspbterm" type="text" class="form-control" placeholder="Cari SPB">
+                  <span class="input-group-btn">
+                      <button id="searchspbbutton" class="btn btn-primary" type="button"><span class="ft-search"></span>Cari</button>
+                  </span>
               </div>
-                <span class="input-group-btn">
-                    <button id="searchspbbutton" class="btn btn-primary" type="button"><span class="ft-search"></span>Cari</button>
-                </span>
-            </div>
-            <div id="searchspbresult" style="height:250px; overflow-y:scroll">
-            </div>
-          <hr/>          
-          <form class="form-inline" method="POST" action="{{ url('manifest/spb/setmanifestmulti') }}">
-              @csrf
-              <div class="form-group mx-sm-3 mb-2 ui-widget">
-                  {{ Form::hidden('manifest_id',$manifest->id) }}
-                  <input name="spb_add" size=65 class="form-control" id="spb2" placeholder="SPB dipilih">
+              <div id="searchspbresult" style="height:350px; overflow-y:scroll">
               </div>
+            </div>
+            <div class="col-md-6">
+              <form class="form-inline" method="POST" action="{{ url('manifest/spb/setmanifestmulti') }}">
+                  @csrf
                   <button type="submit" class="btn btn-primary mb-2"><i class="ft-plus"></i>Tambah ke Manifest</button>
-          </form>
+                  <div class="form-group mx-sm-3 mb-2 ui-widget">
+                      {{ Form::hidden('manifest_id',$manifest->id) }}
+                      <input type="hidden" name="spb_add" class="form-control" id="spb2"/>
+                  </div>
+              </form>
+              <div id="selectedspbresult" style="height:350px; overflow-y:scroll">
+              </div>
+            </div>
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Batal</button>
@@ -370,17 +375,31 @@ $(document).ready(function() {
         url: "{{ url('/spb/searchjson') }}", 
         data: {term: term, limit: 100}, 
         success: function(result){
-        $.each(result, function(k,v) {
-          $('#searchspbresult').append( '<button class="btn btn-block btn-outline-primary spbresult mr-1" data-nospb="'+v.value+'" title="'+v.desc+'">'+v.value+' - '+v.desc+'</button>' );
-        });
-      }});
+          $('#searchspbresult').html('');
+          if(!result.length){
+            $('#searchspbresult').append('Tidak ada hasil');
+          }
+          $.each(result, function(k,v) {
+            if($('#spb2').val().indexOf(v.value) == -1){
+              $('#searchspbresult').append( '<button class="btn btn-block btn-outline-primary spbresult mr-1" data-nospb="'+v.value+'" title="'+v.desc+'">'+v.value+' - '+v.desc+'</button>' );
+            }
+          });
+        }
+      });
     });
+    // result clicked, remove from result, add to selected
     $("#searchspbresult").on('click', '.spbresult', function() {
-      $(this).toggleClass("btn-outline-primary");
-      $(this).toggleClass("btn-primary");      
       var nospb = $(this).data('nospb');
       var $date = $('#spb2');
       $date.val($date.val() + nospb + ',');
+      $('#selectedspbresult').append( $(this) );
+    });
+    // selected clicked, remove from selected, add to result
+    $("#selectedspbresult").on('click', '.spbresult', function() {
+      var nospb = $(this).data('nospb');
+      var $date = $('#spb2');
+      $date.val($date.val().replace( nospb + ',',''));
+      $('#searchspbresult').append( $(this) );
     });
 
     $('.filterstatus').click( function() {

@@ -13,10 +13,16 @@
                         <div class="form-group row">
                           <label class="col-md-3 label-control" for="{{ $val['column'] }}">@lang($val['caption']){!! isset($val['required'])? '<span class="required">*</span>':'' !!}: </label>
                           <div class="col-md-9">
+                          @php
+                          $opt = [];
+                          $opt['class'] = 'form-control';
+                          if(isset($val['required'])) $opt['required'] = 'required';
+                          if(isset($val['readonly'])) $opt['readonly'] = 'readonly';
+                          if(isset($val['dropdown_firstempty']) && $val['dropdown_firstempty']) $opt['placeholder'] = '';
+                          @endphp
                           {{ Form::select($val['column'], 
                             $val['dropdown_model']::pluck($val['dropdown_caption'],$val['dropdown_value']), 
-                            old($val['column'],$item->{$val['column']} ?? null), 
-                            array('class' => 'form-control',isset($val['required'])? 'required':'',isset($val['readonly'])? 'readonly':'')) }}
+                            old($val['column'],$item->{$val['column']} ?? null), $opt) }}
                           </div>
                         </div>    
                         @break
