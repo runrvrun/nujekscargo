@@ -358,6 +358,7 @@ $(document).ready(function() {
         if (confirmupdate == true) {
           $("#sel_spb_ids").val(updateids_str);
           $("#spb-status-modal").modal('show');
+          $("#spb_status_id").change();
         } 
       }
     });
