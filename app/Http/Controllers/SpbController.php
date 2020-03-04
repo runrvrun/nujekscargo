@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Spb;
 use App\Spb_track;
+use App\Spb_warehouse;
 use App\Branch;
 use App\User;
 use Illuminate\Http\Request;
@@ -370,12 +371,25 @@ class SpbController extends Controller
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
         ->where('spbs.id',$spb_id)->first();
-        $track = Spb_track::select('spb_tracks.*','status_code','status','city')
+        $track = Spb_track::select('spb_tracks.*','status_code','spb_statuses.status','city', 'name')
         ->where('spb_id',$spb_id)
         ->leftJoin('spb_statuses','spb_status_id','spb_statuses.id')
         ->leftJoin('cities','city_id','cities.id')
+        ->leftJoin('users','spb_tracks.created_by','users.id')
         ->orderBy('created_at','DESC')->get();
         return view('spb.track',compact('cols','spb','track'));
+    }
+
+    public function track_delete($spb_id, $track_id)
+    {
+        Spb_warehouse::where('spb_track_id',$track_id)->delete();
+        Spb_track::destroy($track_id);
+        // update spb status to latest track
+        $track = Spb_track::where('spb_id',$spb_id)->orderBy('id', 'DESC')->first();
+        Spb::find($spb_id)->update(['spb_status_id'=>$track->spb_status_id]);
+        Session::flash('message', 'Tracking dihapus'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('spb/'.$spb_id.'/track');
     }
     
     public function report($spb_id)

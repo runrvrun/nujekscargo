@@ -142,7 +142,7 @@ $(document).ready(function() {
         responsive: resp,
         processing: true,
         language: {
-          processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="color:#bbbbbb"></i><span class="sr-only">Loading...</span> '
+            processing: 'Loading ... <i class="fa ft-loader fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span> '
         },
         serverSide: true,
         ajax: {
@@ -175,6 +175,13 @@ $(document).ready(function() {
               text: '<i class="ft-plus"></i> Add New', className: 'buttons-add',
               action: function ( e, dt, node, config ) {
                   window.location = '{{ url('spb/create') }}'
+              }
+            },
+            @endif  
+            @if(session('privilege')[3]["add"] ?? 0)
+            {
+              text: '<i class="ft-layers"></i> Make Manifest', className: 'buttons-makemanifest',
+              action: function ( e, dt, node, config ) {
               }
             },
             @endif  
@@ -230,7 +237,7 @@ $(document).ready(function() {
         }
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
-    $('.buttons-add').addClass('btn mr-1');
+    $('.buttons-add, .buttons-makemanifest').addClass('btn mr-1');
     $('.buttons-deletemulti').addClass('btn-danger mr-1');
 
     $('.buttons-deletemulti').click(function(){
@@ -246,6 +253,23 @@ $(document).ready(function() {
         var confirmdelete = confirm("Hapus seluruh data terpilih?");
         if (confirmdelete == true) {
           window.location = '{{ url('spb/destroymulti?id=') }}'+deleteids_str
+        } 
+      }
+    });
+    
+    $('.buttons-makemanifest').click(function(){
+      var spbids_arr = [];
+      var rows_selected = table.column(0).checkboxes.selected();
+      $.each(rows_selected, function(index, rowId){
+        spbids_arr.push(rowId);
+      });
+      var spbids_str = encodeURIComponent(spbids_arr);
+
+      // Check any checkbox checked or not
+      if(spbids_arr.length > 0){
+        var confirmmake = confirm("Buat manifest dengan SPB terpilih?");
+        if (confirmmake == true) {
+          window.location = '{{ url('manifest/createfromspb?id=') }}'+spbids_str
         } 
       }
     });

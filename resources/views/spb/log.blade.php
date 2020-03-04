@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pagetitle')
-    <title>@lang('SPB Tracking')</title>
+    <title>{{ config('app.name', 'Laravel') }} | @lang('Item')</title>
 @endsection
 
 @section('content')
@@ -32,27 +32,13 @@
                 <p class="tracking-status text-tight">{{ $spb->status }}</p>
               </div>
               <div class="tracking-list">
-                @foreach($track as $key=>$val)
+                @foreach($log as $key=>$val)
                 <div class="tracking-item">
                     <div class="tracking-icon status-{{ $val->status_code }}">
                       {{ $val->status_code }}
                     </div>
-                    <div class="tracking-date">
-                      {{ $val->created_at->format('d M Y') }}<span>{{ $val->created_at->format('H:i') }}</span>
-                      @if(Auth::user()->role_id==2 || Auth::user()->role_id==3 || Auth::user()->role_id==10)
-                      <form action="{{ url('spb/'.$spb->id.'/track_delete/'.$val->id) }}">
-                      <a class="danger p-0" onclick="if(confirm('Hapus tracking ini?')) this.closest('form').submit()" title="Hapus">
-                          <i class="ft-trash-2"></i>
-                      </a>
-                      </form>
-                      @endif
-                    </div>
-                    <div class="tracking-content">{{ $val->process }} {{ $val->city }} <div>{{ $val->track }}</div>
-                    <div><span>{{ $val->status }}</span></div>
-                    @if(isset(Auth::user()->id))
-                    <div><span>Update by: {{ $val->name ?? '' }}</span></div>
-                    @endif
-                    </div>
+                    <div class="tracking-date">{{ $val->created_at->format('d M Y') }}<span>{{ $val->created_at->format('H:i') }}</span></div>
+                    <div class="tracking-content">{{ $val->log }}<span>{{ $val->status }}</span></div>
                 </div>
                 @endforeach
               </div>

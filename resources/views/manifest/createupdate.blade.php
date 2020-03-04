@@ -25,7 +25,7 @@
             @slot('route')
               manifest
             @endslot
-          @endcomponent          
+          @endcomponent        
         </div>
       </div>
     </div>
@@ -43,6 +43,10 @@
 <script src="{{ asset('app-assets') }}/js/bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
+  // set default selection
+  $("select[name='origin_province_id'] option[value={{ $userbranch->province_id ?? 31 }}]").attr('selected','selected');
+  $("select[name='destination_province_id'] option[value={{ $userbranch->province_id ?? 31 }}]").attr('selected','selected');
+  // live search select picker
   $("select[name='vehicle_id']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='vehicle_id']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='vehicle_id']").attr('data-size','4'); // dropdown search with bootstrap select
@@ -79,6 +83,14 @@ $(document).ready(function(){
   $("input[name='no_manifest']").val('{{ $no_manifest }}'); // fill next manifest no
   $("input[name='no_manifest']").attr('readonly','readonly');
   @endif 
+  @if(isset($spbids))
+  // if create manifest from spb, add spbids
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'spbids',
+    value: '{{ $spbids }}'
+  }).appendTo('form')
+  @endif  
 });
 </script>
 @endsection

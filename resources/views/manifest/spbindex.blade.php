@@ -86,6 +86,7 @@
                       <button id="searchspbbutton" class="btn btn-primary" type="button"><span class="ft-search"></span>Cari</button>
                   </span>
               </div>
+              <div id="searchspbloading" style="display:none">Searching ... <i class="ft-loader fa fa-spin"></i></div>
               <div id="searchspbresult" style="height:350px; overflow-y:scroll">
               </div>
             </div>
@@ -128,7 +129,7 @@
           Status: {{ Form::select('spb_status_id',\App\Spb_status::pluck('status','id'),null,['class'=>'form-control','id'=>'spb_status_id']) }}
           <div class="row" style="margin-top:3px;">
             <div class="col-6">
-              {{ Form::select('process',['Posisi barang di'=>'Posisi barang di','Proses bongkar di'=>'Proses bongkar di','Lainnya'=>'Lainnya'],null,['class'=>'form-control','id'=>'process']) }}
+              {{ Form::select('process',['Proses penyeberangan'=>'Proses penyebrangan','Posisi truk di'=>'Posisi truk di','Truk antri bongkar'=>'Truk antri bongkar','Proses bongkar'=>'Proses bongkar','Posisi barang di'=>'Posisi barang di','Proses pengantaran'=>'Proses pengantaran','Diterima oleh'=>'Diterima oleh','Lainnya'=>'Lainnya'],null,['class'=>'form-control','id'=>'process']) }}
               <input type="text" name="processother" style="display:none" placeholder="Lainnya" class="form-control" />
             </div>
             <div class="col-6">
@@ -238,6 +239,9 @@ $(document).ready(function() {
     var table = $('.browse-table').DataTable({
         responsive: resp,
         processing: true,
+        language: {
+            processing: 'Loading ... <i class="fa ft-loader fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span> '
+        },
         serverSide: true,
         ajax: {
           url: '{!! url('manifest/'.$manifest->id.'/spb/indexjson') !!}',
@@ -302,7 +306,7 @@ $(document).ready(function() {
             visible: false,
             searchable: false,
         },{
-            targets: ['no_po','address','pic_contact','pic_phone','no_manifest','province','city','type'],
+            targets: ['no_po','address','pic_contact','pic_phone','no_manifest','province','city','type', 'creator','editor','add_by' ],
             visible: false,
         }
         ],
@@ -369,12 +373,14 @@ $(document).ready(function() {
         }
     });
     $('#searchspbbutton').click(function(){
+      $("#searchspbloading").show();
       $("#searchspbresult").empty();
       var term = $('#searchspbterm').val();
       $.ajax({
         url: "{{ url('/spb/searchjson') }}", 
         data: {term: term, limit: 100}, 
         success: function(result){
+          $("#searchspbloading").hide();
           $('#searchspbresult').html('');
           if(!result.length){
             $('#searchspbresult').append('Tidak ada hasil');

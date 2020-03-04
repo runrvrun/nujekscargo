@@ -13,6 +13,10 @@
     color: #f41313;
     font-weight: normal;
 }
+.dataTables_processing {
+    position: absolute;
+    top: 20px !important;
+}
 
 /* hide datatables buttons on mobile */
 @media screen and (max-width: 800px) {

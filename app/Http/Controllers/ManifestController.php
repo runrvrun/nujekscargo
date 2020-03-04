@@ -257,7 +257,8 @@ class ManifestController extends Controller
     {
         $no_manifest = $this->next_no_manifest(Auth::user()->branch_id);
         $cols = $this->cols;        
-        return view('manifest.createupdate',compact('cols','no_manifest'));
+        $userbranch = Branch::find(Auth::user()->branch_id);
+        return view('manifest.createupdate',compact('cols','no_manifest','userbranch'));
     }
     
     public function next_no_manifest($branch_id){
@@ -278,15 +279,35 @@ class ManifestController extends Controller
     public function store(Request $request)
     {//alpha_num|max:12|min:12|
         $request->validate([
+            'title' => 'required',
             'no_manifest' => 'required|unique:manifests,no_manifest,null,id,deleted_at,NULL',
         ]);
 
         $requestData = $request->all();
+        // if create manifest from spb, remove from requestData for insert
+        if(isset($request->spbids)){
+            unset($requestData['spbids']);
+        }
         $requestData['created_by'] = Auth::user()->id;
-        Manifest::create($requestData);
-        Session::flash('message', 'Manifest ditambahkan'); 
+        $manifest = Manifest::create($requestData);
+
+        // if create manifest from spb, add spb like setmanifestmulti
+        if(isset($request->spbids)){
+            $spb_add = str_replace(' ','',$request->spbids);        
+            $spb_add = preg_split('@,@', $spb_add, NULL, PREG_SPLIT_NO_EMPTY);
+            foreach($spb_add as $val){
+                $spb = Spb::where('id',$val)->first(); // use id, not no_spb
+                $spbexist = Manifest_spb::where('manifest_id',$manifest->id)->where('spb_id',$spb->id)->first();
+                if($spbexist){
+                    continue;
+                }
+                Manifest_spb::create(['manifest_id'=>$manifest->id,'spb_id'=>$spb->id]);
+            }
+        }
+
+        Session::flash('message', 'Manifest dibuat'); 
         Session::flash('alert-class', 'alert-success'); 
-        return redirect('manifest');
+        return redirect('manifest/'.$manifest->id.'/spb');
     }
 
     /**
@@ -441,6 +462,25 @@ class ManifestController extends Controller
                     'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
                 ];
             }
+            if($val == 'created_by'){
+                $cols['add_by'] = ['column'=>'add_by','dbcolumn'=>'users.name',
+                    'caption'=>'Masuk Manifest',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+                $cols['creator'] = ['column'=>'creator','dbcolumn'=>'creator.name',
+                    'caption'=>'Created By',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
+            if($val == 'updated_by'){
+                $cols['editor'] = ['column'=>'editor','dbcolumn'=>'editor.name',
+                    'caption'=>'Updated By',
+                    'type' => 'text',
+                    'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
+                ];
+            }
         } 
         $cols['customer_id']['B'] = 0;
         $cols['province_id']['B'] = 0;
@@ -451,6 +491,8 @@ class ManifestController extends Controller
         $cols['branch_id']['B'] = 0;
         $cols['deleted_at']['B'] = 0;
         $cols['note']['B'] = 0;
+        $cols['created_by']['B'] = 0;
+        $cols['updated_by']['B'] = 0;
 
         $manifest = Manifest::select('manifests.*','origins.province as origin','destinations.province as destination')
         ->leftJoin('provinces as origins','origin_province_id','origins.id')
@@ -467,12 +509,15 @@ class ManifestController extends Controller
         ->where('manifest_id',$manifest_id)
         ->whereNotNull('user_id')->get();
 
-        $spb = Spb::select('spbs.*','manifest_id','customer','province','city','status_code')
+        $spb = Spb::select('spbs.*','manifest_id','customer','province','city','status_code', 'creator.name as creator', 'editor.name as editor', 'adder.name as add_by')
         ->leftJoin('customers','customer_id','customers.id')
         ->leftJoin('cities','spbs.city_id','cities.id')
         ->leftJoin('provinces','spbs.province_id','provinces.id')
         ->leftJoin('spb_statuses','spbs.spb_status_id','spb_statuses.id')
         ->leftJoin('manifest_spbs','manifest_spbs.spb_id','spbs.id')
+        ->leftJoin('users as creator','spbs.created_by','creator.id')
+        ->leftJoin('users as editor','spbs.updated_by','editor.id')
+        ->leftJoin('users as adder','manifest_spbs.created_by','adder.id')
         ->where('manifest_id',$manifest_id);
         
         if($request->filterstatus >= 0){
@@ -525,7 +570,7 @@ class ManifestController extends Controller
             if($spbexist){
                 continue;
             }
-            Manifest_spb::create(['manifest_id'=>$request->manifest_id,'spb_id'=>$spb->id]);
+            Manifest_spb::create(['manifest_id'=>$request->manifest_id,'spb_id'=>$spb->id, 'created_by'=> Auth::user()->id]);
         }
         Session::flash('message', 'SPB ditambahkan ke Manifest'); 
         Session::flash('alert-class', 'alert-success'); 
@@ -544,9 +589,9 @@ class ManifestController extends Controller
 
         if(!empty($request->sel_spb_id)){
             Spb::find($request->sel_spb_id)->update(['spb_status_id'=>$request->spb_status_id]);
-            Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'note'=>$request->spb_status_note,'created_by'=>Auth::user()->id,'track'=>$request->track]);
+            $track = Spb_track::create(['spb_id'=>$request->sel_spb_id,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'note'=>$request->spb_status_note,'created_by'=>Auth::user()->id,'track'=>$request->track]);
             if(!empty($request->warehouse_city_id)){
-                Spb_warehouse::create(['spb_id'=>$request->sel_spb_id,'city_id'=>$request->warehouse_city_id,'user_id'=>$request->user_id]);
+                Spb_warehouse::create(['spb_id'=>$request->sel_spb_id, 'spb_track_id'=>$track->id,'city_id'=>$request->warehouse_city_id,'user_id'=>$request->user_id]);
             }
             if(!empty($request->spb_status_note)){
                 Spb::find($request->sel_spb_id)->update(['note'=>$request->spb_status_note]);
@@ -555,9 +600,9 @@ class ManifestController extends Controller
             $sel_spb_ids = explode('%2C',$request->sel_spb_ids);
             foreach($sel_spb_ids as $key=>$val){
                 Spb::find($val)->update(['spb_status_id'=>$request->spb_status_id]);
-                Spb_track::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
+                $track = Spb_track::create(['spb_id'=>$val,'spb_status_id'=>$request->spb_status_id,'process'=>$request->process,'city_id'=>$request->city_id,'created_by'=>Auth::user()->id,'track'=>$request->track]);
                 if(!empty($request->warehouse_city_id)){
-                    Spb_warehouse::create(['spb_id'=>$val,'city_id'=>$request->warehouse_city_id,'user_id'=>$request->user_id]);
+                    Spb_warehouse::create(['spb_id'=>$val, 'spb_track_id'=>$track->id,'city_id'=>$request->warehouse_city_id,'user_id'=>$request->user_id]);
                 }
                 if(!empty($request->spb_status_note)){
                     Spb::find($val)->update(['note'=>$request->spb_status_note]);
@@ -595,5 +640,13 @@ class ManifestController extends Controller
         }else{
             return redirect ('manifest');
         }
+    }
+
+    public function createfromspb(Request $request){
+        $spbids = $request->id;
+        $no_manifest = $this->next_no_manifest(Auth::user()->branch_id);
+        $userbranch = Branch::find(Auth::user()->branch_id);
+        $cols = $this->cols;        
+        return view('manifest.createupdate',compact('cols','no_manifest','userbranch','spbids'));
     }
 }

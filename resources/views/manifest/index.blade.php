@@ -100,6 +100,9 @@ $(document).ready(function() {
     var table = $('.browse-table').DataTable({
         responsive: resp,
         processing: true,
+        language: {
+            processing: 'Loading ... <i class="fa ft-loader fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span> '
+        },
         serverSide: true,
         ajax: {
           url: '{!! url('manifest/indexjson') !!}',

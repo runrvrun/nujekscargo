@@ -36,7 +36,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css">
     <!-- END APEX CSS-->
     <!-- BEGIN Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}css/style.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}css/style.css?v=1">
     <!-- END Custom CSS-->
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">

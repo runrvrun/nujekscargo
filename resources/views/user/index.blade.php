@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | Pengguna</title>
+    <title>Pengguna</title>
 @endsection
 
 @section('content')

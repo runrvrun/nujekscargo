@@ -102,6 +102,7 @@
                             <p style="font-size:14px;">PENERIMA</p><br>
                             <p style="font-size:11px;">{{ $spb->recipient }}</p>
                             <p style="font-size:11px;">{{ $spb->address }}</p>
+                            <p>PIC: {{ $spb->pic_contact }} - {{ $spb->pic_phone }}</p>
                         </td></tr></table>
                     </td>
                 </tr>
@@ -138,7 +139,7 @@
                         <td style="text-align:right">{{ $val->weight*$val->bale }}</td>
                         <td>{{ $val->length.'X'.$val->width.'X'.$val->height }}</td>
                         <td style="text-align:right">{{ number_format($val->length*$val->width*$val->height*$val->bale/1000000,3) }}</td>
-                        <td>{{ $val->packaging }}</td>
+                        <td style="text-align:center">{{ $val->packaging }}</td>
                         <td>{{ $val->no_po }}</td>
                     </tr>
                     @endforeach
